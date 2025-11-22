@@ -214,8 +214,22 @@ async function refreshGlobalPrice() {
       return;
     }
 
-    const priceBN = quoteRes.mul(ethersLib.constants.WeiPerEther).div(lockRes);
+    // Determine decimals for lockToken (HEX = 8, everything else = 18)
+    let lockDecimals = 18;
+    if (cfg.label === "HEX") {
+      lockDecimals = 8;
+    }
+    
+    // Calculate price scaled to 1e18
+    // price1e18 = quoteRes * 10^(18 + lockDecimals - quoteDecimals) / lockRes
+    // DAI has 18 decimals → quoteDecimals = 18 → simplifies to 10^(lockDecimals)
+    const scale = ethersLib.BigNumber.from(10).pow(lockDecimals);
+    
+    const priceBN = quoteRes.mul(scale).mul(ethersLib.constants.WeiPerEther).div(lockRes);
+    
+    // Convert to float for display
     const float = Number(ethersLib.utils.formatUnits(priceBN, 18));
+
 
     globalPriceDiv.textContent = `1 ${cfg.label} ≈ ${float.toFixed(6)} DAI`;
     globalPriceRaw.textContent = `raw 1e18: ${priceBN.toString()}`;
