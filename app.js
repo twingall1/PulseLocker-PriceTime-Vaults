@@ -1,7 +1,7 @@
 // ================================
-// app.js (FINAL CLEAN VERSION — PART 1)
+// app.js (FINAL with HEX display fix) - PART 1
 // ================================
-console.log("Generic vault app.js loaded (final cleaned version).");
+console.log("Generic vault app.js loaded (HEX display fixed).");
 
 if (!window.ethers) {
   alert("Ethers failed to load.");
@@ -12,7 +12,7 @@ const ethersLib = window.ethers;
 // -------------------------------
 // CONFIG
 // -------------------------------
-const FACTORY_ADDRESS = "0xD243c80BD1d29FEf078c7199bdA48750F5510B61".toLowerCase();   // replace with your actual V4 factory address
+const FACTORY_ADDRESS = "0xD243c80BD1d29FEf078c7199bdA48750F5510B61".toLowerCase(); // <--- PUT V4/Vx FACTORY HERE
 
 // Known tokens & PulseX pairs
 const ADDR = {
@@ -177,15 +177,6 @@ async function refreshGlobalPrice() {
 
     pairAddressSpan.textContent = cfg.pair;
 
-    // Source (PulseX V1 / V2)
-    let sourceLabel =
-      (cfg.pair === ADDR.PLS_DAI_PAIR || cfg.pair === ADDR.PDAI_DAI_PAIR)
-      ? "PulseX V2 pool"
-      : "PulseX V1 pool";
-    
-    // write source label first, price comes after
-
-
     const pair = new ethersLib.Contract(cfg.pair, pairAbi, provider);
     const [r0, r1] = await pair.getReserves();
 
@@ -212,14 +203,25 @@ async function refreshGlobalPrice() {
       return;
     }
 
-    // EXACT PRICE LOGIC MATCHING VAULT SOL:
+    // Raw on-chain price (matches vault logic):
+    // price1e18 = (quoteRes * 1e18) / lockRes
     const priceBN = quoteRes.mul(ethersLib.constants.WeiPerEther).div(lockRes);
-    const float = Number(ethersLib.utils.formatUnits(priceBN, 18));
 
-    globalPriceDiv.innerHTML = `
-      Source: <b>${sourceLabel}</b><br>
-      1 ${cfg.label} ≈ ${float.toFixed(6)} DAI
-    `;
+    // DISPLAY DECIMALS:
+    // - PLS & pDAI: 18/18 ⇒ 18
+    // - HEX: 8/18 ⇒ priceBN / 1e10 ⇒ 28 decimals for human display
+    const displayDecimals = (assetCode === "HEX") ? 28 : 18;
+
+    const float = Number(ethersLib.utils.formatUnits(priceBN, displayDecimals));
+
+    // Optional: show which PulseX version
+    const sourceLabel =
+      (cfg.pair === ADDR.PLS_DAI_PAIR || cfg.pair === ADDR.PDAI_DAI_PAIR)
+        ? "PulseX V2 pool"
+        : "PulseX V1 pool";
+
+    globalPriceDiv.textContent =
+      `Source: ${sourceLabel} — 1 ${cfg.label} ≈ ${float.toFixed(6)} DAI`;
 
     globalPriceRaw.textContent = `raw 1e18: ${priceBN.toString()}`;
 
@@ -234,9 +236,8 @@ setInterval(refreshGlobalPrice, 15000);
 assetSelect.addEventListener("change", refreshGlobalPrice);
 
 // PART 1 END
-
 // ================================
-// app.js (FINAL CLEAN VERSION — PART 2)
+// app.js (FINAL with HEX display fix) - PART 2
 // ================================
 
 // -------------------------------
@@ -289,6 +290,8 @@ createForm.addEventListener("submit", async (e) => {
     const priceStr = targetPriceInput.value.trim();
     if (!priceStr) throw new Error("Enter a target price");
 
+    // NOTE: We leave threshold parsing as-is, since you said
+    // the HEX target input & "Target:" card display are already correct.
     const th1e18 = ethersLib.utils.parseUnits(priceStr, 18);
 
     const dt = unlockDateInput.value.trim();
@@ -467,8 +470,11 @@ function renderLocks() {
       ethersLib.utils.formatUnits(lock.threshold, 18)
     );
 
+    // DISPLAY DECIMALS FOR CURRENT PRICE (match global feed):
+    const priceDisplayDecimals = (assetLabel === "HEX") ? 28 : 18;
+
     const currentPriceFloat = lock.currentPriceBN.gt(0)
-      ? parseFloat(ethersLib.utils.formatUnits(lock.currentPriceBN, 18))
+      ? parseFloat(ethersLib.utils.formatUnits(lock.currentPriceBN, priceDisplayDecimals))
       : 0;
 
     const balanceFloat = parseFloat(
@@ -478,7 +484,7 @@ function renderLocks() {
     const withdrawnTag = lock.withdrawn;
     const canWithdraw = lock.canWithdraw && !lock.withdrawn;
 
-    // Price goal percentage
+    // Price goal percentage (uses raw 1e18 values; unchanged)
     let priceGoalPct = 0;
     if (lock.threshold.gt(0) && lock.currentPriceBN.gt(0)) {
       const pctBN = lock.currentPriceBN.mul(10000).div(lock.threshold); // basis points
@@ -685,5 +691,4 @@ function formatCountdownNumber(diff) {
   if (!d && !h && !m) parts.push(s + "s");
   return parts.join(" ");
 }
-
 
