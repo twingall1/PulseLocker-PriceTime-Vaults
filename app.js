@@ -476,9 +476,11 @@ function renderLocks() {
     const currentPriceFloat = lock.currentPriceBN.gt(0)
       ? parseFloat(ethersLib.utils.formatUnits(lock.currentPriceBN, priceDisplayDecimals))
       : 0;
-
+    // Correct display decimals: HEX = 8, others = 18
+    const balanceDisplayDecimals = (assetLabel === "HEX") ? 8 : 18;
+    
     const balanceFloat = parseFloat(
-      ethersLib.utils.formatUnits(lock.balanceBN, 18)
+      ethersLib.utils.formatUnits(lock.balanceBN, balanceDisplayDecimals)
     );
 
     const withdrawnTag = lock.withdrawn;
