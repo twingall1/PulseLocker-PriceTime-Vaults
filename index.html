@@ -228,10 +228,11 @@
         <h2>Global Price Feed</h2>
         <div class="small" style="margin-bottom:6px;">
           Source: PulseX <b>pools</b> for the selected asset.<br>
+          Each asset uses a <b>primary feed</b> and a <b>backup feed</b>.<br>
+          If both feeds are healthy, the vaults use the one with <b>higher USD-side liquidity</b>.<br>
           Pair address:<br>
           <span id="pairAddress" class="mono"></span>
         </div>
-
         <div id="globalPrice"></div>
         <div id="globalPriceRaw" class="small"></div>
       </div>
