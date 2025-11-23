@@ -109,27 +109,26 @@ const factoryAbi = [
 const vaultAbi = [
   "function owner() view returns (address)",
   "function lockToken() view returns (address)",
-  "function quoteToken() view returns (address)",
-  "function pair() view returns (address)",
+  "function primaryQuoteToken() view returns (address)",
+  "function backupQuoteToken() view returns (address)",
+  "function primaryPair() view returns (address)",
+  "function backupPair() view returns (address)",
   "function isNative() view returns (bool)",
-  "function lockTokenIsToken0() view returns (bool)",
-
+  "function primaryLockTokenIsToken0() view returns (bool)",
+  "function backupLockTokenIsToken0() view returns (bool)",
   "function priceThreshold() view returns (uint256)",
   "function unlockTime() view returns (uint256)",
   "function startTime() view returns (uint256)",
   "function withdrawn() view returns (bool)",
-
   "function currentPrice1e18() view returns (uint256)",
   "function priceConditionMet() view returns (bool)",
   "function timeConditionMet() view returns (bool)",
   "function canWithdraw() view returns (bool)",
   "function secondsUntilTimeUnlock() view returns (uint256)",
-
-  // V6 priceDetail:
   "function priceDetail() view returns (uint256,bool,uint256,uint256,bool,uint256,uint256,bool,bool,bool)",
-
   "function withdraw() external"
 ];
+
 
 const pairAbi = [
   "function token0() view returns (address)",
