@@ -93,6 +93,7 @@
       border-radius:6px;
       background:#1e40af;
       cursor:pointer;
+      position: relative; /* for popup positioning */
     }
     .copy-icon-btn:hover {
       background:#1d4ed8;
@@ -102,6 +103,28 @@
       height:16px;
       fill:white;
       display:block;
+    }
+    .copy-popup {
+      position:absolute;
+      top:-18px;
+      left:50%;
+      transform:translateX(-50%);
+      background:#111827;
+      color:#e5e7eb;
+      font-size:10px;
+      padding:2px 6px;
+      border-radius:999px;
+      border:1px solid #4b5563;
+      opacity:0;
+      pointer-events:none;
+      animation: copy-pop 0.8s ease-out forwards;
+      z-index:5;
+    }
+    @keyframes copy-pop {
+      0% { opacity:0; transform:translate(-50%, 0px); }
+      20% { opacity:1; transform:translate(-50%, -4px); }
+      80% { opacity:1; transform:translate(-50%, -4px); }
+      100% { opacity:0; transform:translate(-50%, -8px); }
     }
 
     /* ----- PIE CHART (price goal) ----- */
@@ -167,7 +190,7 @@
     <span style="font-size:30px;">⏳</span>
     <span>
       <b>Price + Time Vaults (PLS / pDAI / HEX)</b><br>
-      <span class="small">Discipline vaults with price-mediated unlock &amp; time backup (V8 USD-normalized feeds)</span>
+      <span class="small">Discipline vaults with price-mediated unlock &amp; time backup</span>
     </span>
   </h1>
 
@@ -183,15 +206,14 @@
       • This site lets you create <b>immutable vaults</b> for PLS, pDAI, or HEX.<br>
       • Your tokens are locked until the <b>market price</b> crosses your threshold,
         or a <b>backup time unlock</b> is reached.<br>
-      • Price feed uses PulseX pools for the chosen asset (PLS/DAI, pDAI/DAI, HEX/DAI + USDC backups).<br>
-      • V8 vaults choose feeds by <b>USD-normalized liquidity</b> (using known decimals for DAI=18, USDC=6).<br>
+      • Price feed uses PulseX pools for the chosen asset (PLS/USDC &amp; DAI backup, pDAI/DAI, HEX/USDC &amp; DAI backup).<br>
+      • Feeds are chosen by <b>USD-normalized liquidity</b> (using known decimals for DAI=18, USDC=6).<br>
       • Vault logic is enforced fully on-chain; no one (including the deployer) can change the rules.<br><br>
       • To deposit: send the chosen token (or PLS) directly to the vault address.<br>
       • To withdraw: call <b>Withdraw</b> once the price OR the backup time condition is met.<br>
       • Time-based unlock still works even if price pairs are illiquid.<br>
       <div class="fee-note">
-        ⚠ A <b>0.5% fee</b> is charged on successful withdrawal, paid in the locked asset
-        to <span class="mono">0x0e4519e78e3c4bd16c7500e41d4605e54c7cd3b4</span>.
+        ⚠ A <b>0.5% fee</b> is charged on successful withdrawal.
       </div>
     </div>
   </div>
@@ -210,7 +232,7 @@
           </select>
           <br><br>
 
-          <label>Target price (DAI per 1 unit)</label>
+          <label>Target price (USD per 1 unit)</label>
           <input id="targetPrice" type="text" placeholder="0.0100" required />
 
           <label>Backup unlock date &amp; time</label>
@@ -228,7 +250,7 @@
         <div class="small" style="margin-bottom:6px;">
           Source: PulseX <b>pools</b> for the selected asset.<br>
           Each asset uses a <b>primary feed</b> and a <b>backup feed</b>.<br>
-          V8 vaults choose the feed with higher <b>USD-normalized</b> liquidity.<br>
+          Feeds are chosen by <b>USD-normalized</b> liquidity.<br>
           Pair address:<br>
           <span id="pairAddress" class="mono"></span>
         </div>
