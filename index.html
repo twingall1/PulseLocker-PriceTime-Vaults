@@ -377,6 +377,49 @@
     .vault-col-feeds {
         margin-top: 11px;   /* adjust 4–14px as needed */
     }
+        /* Prevent Create New Lock fields from ever wrapping */
+    #createForm {
+      display: flex;
+      flex-wrap: nowrap !important;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    /* Keep labels inline and stable */
+    #createForm label {
+      white-space: nowrap;
+    }
+    
+    /* Prevent date/time input wrapping */
+    #unlockDateTime {
+      white-space: nowrap;
+      min-width: 180px;
+    }
+    
+    /* Prevent target price input from shrinking too small */
+    #targetPrice {
+      min-width: 120px;
+    }
+    
+    /* Keep the Create button fixed in place */
+    #createBtn {
+      flex: 0 0 auto !important;
+      white-space: nowrap;
+    }
+    /* Make the header inline so trio sits directly after the vault title */
+    .vault-header {
+        display: flex !important;
+        justify-content: flex-start !important;  /* important */
+        align-items: center !important;
+        gap: 10px !important;
+    }
+    
+    /* trio should no longer float or be shifted */
+    .vault-header-actions {
+        position: static !important;
+        margin-left: 12px !important;   /* small spacing after [LOCKED] */
+    }
+
   </style>
 
 </head>
