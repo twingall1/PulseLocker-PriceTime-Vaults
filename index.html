@@ -405,7 +405,12 @@
     .maximize-btn {
       margin-left: 6px !important;
     }
-
+    /* --- FORCE ADDRESS INPUT TO RESPECT FIXED WIDTH --- */
+    .vault-header-actions input {
+      flex: 0 0 auto !important;   /* override flex-grow and flex-shrink */
+      width: 410px !important;     /* now this WILL take effect */
+      max-width: 410px !important;
+    }
   </style>
 </head>
 
