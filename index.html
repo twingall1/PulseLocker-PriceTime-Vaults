@@ -26,6 +26,7 @@
       --min-btn: #facc15;
       --min-btn-hover: #fbbf24;
     }
+  
     body.light-theme {
       /* light theme */
       --bg: #f5f9ff;
@@ -46,7 +47,7 @@
       --min-btn: #eab308;
       --min-btn-hover: #ca8a04;
     }
-
+  
     body {
       font-family: system-ui, sans-serif;
       background: var(--bg);
@@ -54,11 +55,12 @@
       margin: 0;
       padding: 16px;
     }
+  
     h1, h2 {
       margin-top: 0;
       color: var(--text);
     }
-
+  
     .card {
       background: var(--card-bg);
       border-radius: 12px;
@@ -70,7 +72,7 @@
     body.light-theme .card {
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
-
+  
     input, button, select {
       padding: 6px 8px;
       border-radius: 8px;
@@ -79,7 +81,7 @@
       color: var(--text);
       font-size: 14px;
     }
-
+  
     button {
       cursor: pointer;
       border: none;
@@ -90,14 +92,14 @@
     }
     button:hover { background: var(--accent-hover); }
     button[disabled] { opacity: 0.5; cursor: not-allowed; }
-
+  
     select { cursor: pointer; }
-
+  
     .small {
       font-size: 12px;
       color: var(--subtext);
     }
-
+  
     .tag {
       padding: 2px 8px;
       border-radius: 999px;
@@ -108,18 +110,18 @@
       margin-top: 4px;
       display: inline-block;
     }
-
+  
     .status-ok { color: var(--status-ok); }
     .status-warn { color: var(--status-warn); }
     .status-bad { color: var(--status-bad); }
-
+  
     .mono {
       font-family: Courier, monospace;
       font-size: 13px;
       user-select: text !important;
       color: #a5b4fc;
     }
-
+  
     /* HEADER */
     .header-row {
       display: flex;
@@ -149,7 +151,7 @@
       gap: 10px;
       flex-wrap: wrap;
     }
-
+  
     .theme-toggle {
       padding: 4px 8px;
       font-size: 12px;
@@ -159,14 +161,14 @@
       background: #e5e7eb;
       color: #111827;
     }
-
+  
     .wallet-info {
       display: flex;
       flex-direction: column;
       gap: 2px;
       align-items: flex-end;
     }
-
+  
     /* ===== 3 COLUMN MOVE ===== */
     .three-col-grid {
       display: grid;
@@ -174,31 +176,32 @@
       gap: 16px;
       align-items: start;
     }
+  
     .col-1, .col-2, .col-3 {
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
+  
     .about-onecol {
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
-
+  
     @media (max-width: 1100px) {
       .three-col-grid {
         grid-template-columns: 1fr;
       }
     }
-
+  
     /* LOCKS */
-
     #locksContainer {
       display: flex;
       flex-direction: column;
       gap: 14px;
     }
-
+  
     .vault-card {
       transition: box-shadow 0.3s, border 0.3s;
     }
@@ -206,37 +209,85 @@
       box-shadow: 0 0 16px 3px rgba(0,200,120,0.35);
       border: 1px solid #00b870 !important;
     }
-
+  
     .vault-header {
       display: flex;
       align-items: center;
       gap: 6px;
       margin-bottom: 6px;
       white-space: nowrap;
+      align-items: flex-start; /* needed for aligned top rows */
     }
+  
     .vault-header-left {
       display: flex;
       align-items: center;
       gap: 6px;
       flex-wrap: nowrap;
     }
+  
     .vault-header-actions {
       display: flex;
       align-items: center;
       gap: 6px;
       white-space: nowrap;
+      position: relative !important;
+      right: 780px !important; /* your chosen final left-shift */
+      margin-top: 0 !important;
+      padding-top: 0 !important;
     }
-
+  
+    /* Address bar size + ellipsis */
+    .vault-header-actions input {
+      flex: 0 0 auto !important;
+      width: 310px !important;
+      max-width: 310px !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+    }
+  
+    .copy-icon-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--copy-bg);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-left: 6px !important;
+    }
+    .copy-icon-btn:hover {
+      background: var(--copy-bg-hover);
+    }
+    .copy-icon-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: #fff;
+    }
+  
+    .minimize-btn,
+    .maximize-btn {
+      background: var(--min-btn);
+      color: #111827;
+      font-size: 11px;
+      padding: 4px 6px;
+      border-radius: 6px;
+      flex: 0 0 auto;
+      margin-left: 6px !important;
+    }
+  
     /* FIVE COLUMN BODY */
     .vault-body {
       display: inline-flex;
       align-items: flex-start;
-      gap: 24px; /* breathing room */
+      gap: 24px;
       white-space: nowrap;
       width: 100%;
     }
-
-    /* Column 1 (restored text) */
+  
     .vault-col-main {
       flex: 0 1 auto;
       display: flex;
@@ -244,17 +295,15 @@
       gap: 2px;
       white-space: nowrap;
     }
-
+  
     .col1-line {
       font-size: 13px;
       white-space: nowrap;
     }
-
     .col1-value-bold {
       font-weight: 600;
     }
-
-    /* Column 2 (buttons) */
+  
     .vault-col-buttons {
       flex: 0 0 auto;
       display: flex;
@@ -262,8 +311,7 @@
       justify-content: flex-end;
       gap: 6px;
     }
-
-    /* Column 3 (pie) */
+  
     .vault-col-pie {
       flex: 0 0 auto;
       display: flex;
@@ -272,6 +320,7 @@
       gap: 4px;
       white-space: nowrap;
     }
+  
     .price-goal-pie {
       width: 56px;
       height: 56px;
@@ -279,8 +328,7 @@
       background: #020617;
       border: 1px solid #000;
     }
-
-    /* Column 4 (time) */
+  
     .vault-col-time {
       flex: 0 0 auto;
       display: flex;
@@ -288,6 +336,7 @@
       gap: 4px;
       white-space: nowrap;
     }
+  
     .time-progress-bar-bg {
       width: 100%;
       height: 8px;
@@ -295,6 +344,7 @@
       background: #1f2937;
       overflow: hidden;
     }
+  
     .time-progress-bar-fill {
       height: 100%;
       border-radius: 999px;
@@ -302,24 +352,13 @@
       width: 0%;
       transition: width 0.3s linear;
     }
-
-    /* Column 5 (feeds + min/max) */
+  
     .vault-col-feeds {
       flex: 0 0 auto;
       white-space: nowrap;
       min-width: 200px;
     }
-
-    /* Buttons */
-    .minimize-btn,
-    .maximize-btn {
-      background: var(--min-btn);
-      color: #111827;
-      font-size: 11px;
-      padding: 4px 6px;
-      border-radius: 6px;
-    }
-
+  
     .vault-card.collapsed .vault-body {
       display: none;
     }
@@ -332,86 +371,8 @@
     .vault-card.collapsed .maximize-btn {
       display: inline-flex;
     }
-    /* --- Fix for vault card header: address bar + copy icon + min icon --- */
-
-    .vault-header-actions {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    .vault-header-actions input {
-      flex: 1 1 auto;
-      max-width: 240px;  /* reduce width to make space */
-    }
-    
-    .copy-icon-btn {
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--copy-bg);
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    
-    .copy-icon-btn:hover {
-      background: var(--copy-bg-hover);
-    }
-    
-    .copy-icon-btn svg {
-      width: 16px;
-      height: 16px;
-      fill: #fff;
-    }
-    
-    .minimize-btn,
-    .maximize-btn {
-      flex: 0 0 auto;
-    }
-    /* --- MOVE ADDRESS BAR LEFTWARD + WIDEN INPUT (override only) --- */
-    
-    .vault-header-actions {
-      position: relative;
-      right: 240px;   /* shift left – adjust as needed */
-    }
-    
-
-    
-    .vault-header {
-      align-items: flex-start;
-    }
-    /* --- STRONG OVERRIDES FOR ADDRESS TRIO POSITION + WIDTH --- */
-    
-    .vault-header-actions {
-      position: relative !important;
-      right: 780px !important;   /* move left further; adjust if needed */
-      margin-top: 0 !important;
-      padding-top: 0 !important;
-    }
-    
-    .vault-header-actions input {
-      max-width: 400px !important;    /* enforce ~20–30% wider input */
-      width: 400px !important;        /* hard width so it doesn’t collapse */
-    }
-    
-    .copy-icon-btn {
-      margin-left: 6px !important;
-    }
-    
-    .minimize-btn,
-    .maximize-btn {
-      margin-left: 6px !important;
-    }
-    /* --- FORCE ADDRESS INPUT TO RESPECT FIXED WIDTH --- */
-    .vault-header-actions input {
-      flex: 0 0 auto !important;   /* override flex-grow and flex-shrink */
-      width: 310px !important;     /* now this WILL take effect */
-      max-width: 310px !important;
-    }
   </style>
+
 </head>
 
 <body>
