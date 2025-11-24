@@ -377,6 +377,11 @@
     .vault-col-feeds {
         margin-top: 11px;   /* adjust 4–14px as needed */
     }
+    .form-row {
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+    }
   </style>
 
 </head>
@@ -415,23 +420,33 @@
       <div class="card">
         <h2>Create New Lock</h2>
         <form id="createForm">
-          <label>Asset</label><br>
-          <select id="assetSelect">
-            <option value="PLS">PLS (native)</option>
-            <option value="PDAI">pDAI (token)</option>
-            <option value="HEX">HEX (token)</option>
-          </select>
-          <br><br>
-
-          <label>Target price (USD per 1 unit)</label>
-          <input id="targetPrice" type="text" placeholder="0.0100" required />
-
-          <label>Time unlock date &amp; time</label>
-          <input id="unlockDateTime" type="datetime-local" required />
-
-          <button type="submit" id="createBtn">Create Vault</button>
-          <div id="createStatus" class="small"></div>
+        
+          <div class="form-row">
+            <label>Asset</label>
+            <select id="assetSelect">
+              <option value="PLS">PLS (native)</option>
+              <option value="PDAI">pDAI (token)</option>
+              <option value="HEX">HEX (token)</option>
+            </select>
+          </div>
+        
+          <div class="form-row">
+            <label>Target price (USD per 1 unit)</label>
+            <input id="targetPrice" type="text" placeholder="0.0100" required />
+          </div>
+        
+          <div class="form-row">
+            <label>Time unlock date &amp; time</label>
+            <input id="unlockDateTime" type="datetime-local" required />
+          </div>
+        
+          <div class="form-row">
+            <button type="submit" id="createBtn">Create Vault</button>
+            <div id="createStatus" class="small"></div>
+          </div>
+        
         </form>
+
       </div>
 
       <div class="card">
