@@ -56,7 +56,7 @@ function formatReserveK(value) {
 // CONFIG
 // -------------------------------
 // TODO: replace this with your deployed V9 factory address:
-const FACTORY_ADDRESS = "0xYourV9FactoryAddressHere".toLowerCase();
+const FACTORY_ADDRESS = "0x1eAED9f973126A6a350469AAEF3a7DC0a9B403B3".toLowerCase();
 
 // Known tokens & PulseX pairs
 const ADDR = {
