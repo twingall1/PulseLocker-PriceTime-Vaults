@@ -435,6 +435,53 @@ function saveLocalVaultAddress(addr) {
     localStorage.setItem(localKey(), JSON.stringify(list));
   }
 }
+// -----------------------------------------
+// RESTORE ALL VAULTS EVER CREATED BY THIS WALLET (on-chain scan)
+// -----------------------------------------
+async function restoreAllVaults() {
+  if (!provider || !userAddress) {
+    manualAddStatus.textContent = "Connect wallet first.";
+    return;
+  }
+
+  try {
+    manualAddStatus.textContent = "Scanning chain for vaults...";
+
+    const filter = {
+      address: "0xAa64fc582874a4d1855582E0875A8ACf39f3E4CB",  // <--- YOUR FACTORY
+      fromBlock: 0,
+      toBlock: "latest",
+      topics: [
+        ethersLib.utils.id("VaultCreated(address,address,bytes32,uint256,uint256)"),
+        ethersLib.utils.hexZeroPad(userAddress, 32)
+      ]
+    };
+
+    const logs = await provider.getLogs(filter);
+    const iface = new ethersLib.utils.Interface(factoryAbi);
+
+    let count = 0;
+
+    for (const log of logs) {
+      const parsed = iface.parseLog(log);
+      const vaultAddr = parsed.args.vault.toLowerCase();
+
+      saveLocalVaultAddress(vaultAddr);
+      count++;
+    }
+
+    manualAddStatus.textContent =
+      count > 0
+        ? `Restored ${count} vault(s).`
+        : "No vaults found for this wallet.";
+
+    await loadLocalVaults();
+
+  } catch (err) {
+    manualAddStatus.textContent = "Restore failed: " + err.message;
+    console.error("Restore error:", err);
+  }
+}
 
 // CREATE VAULT
 createForm.addEventListener("submit", async (e) => {
