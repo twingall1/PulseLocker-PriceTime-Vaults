@@ -350,9 +350,9 @@ async function refreshGlobalPrice() {
     }
     if (cfg.backupPair) {
       if (backupInfo.ok) {
-        rawText += `,  𝟐° raw 1e18: ${backupInfo.priceBN.toString()}`;
+        rawText += `,   𝟐° raw 1e18: ${backupInfo.priceBN.toString()}`;
       } else {
-        rawText += `,  𝟐°: unavailable`;
+        rawText += `,   𝟐°: unavailable`;
       }
     }
     globalPriceRaw.textContent = rawText.trim();
@@ -765,7 +765,7 @@ function renderLocks() {
                    border:1px solid var(--input-border);
                    padding:3px 4px;
                    border-radius:6px;
-                   width: 370px;
+                   width: 400px;
                    max-width:310px;
                    overflow:hidden;
                    text-overflow:ellipsis;
@@ -795,19 +795,19 @@ function renderLocks() {
           <!-- COL 1: main info text (aligned colons, bold values) -->
           <div class="vault-col-main">
             <div class="col1-line">
-              target&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
+              target&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
               &nbsp;<span class="col1-value-bold">1 ${assetLabel} ≥ $${formatLockPrice(thresholdFloat)}</span>
             </div>
             <div class="col1-line">
-              current&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
+              current&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
               &nbsp;<span class="col1-value-bold">$${formatLockPrice(currentPriceFloat)}</span>
             </div>
             <div class="col1-line">
-              time&nbsp;unlock&nbsp;&nbsp;:
+              time&nbsp;unlock&nbsp;:
               &nbsp;<span class="col1-value-bold">${formatTimestamp(lock.unlockTime)}</span>
             </div>
             <div class="col1-line">
-              locked&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
+              locked&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
               &nbsp;<span class="col1-value-bold">${balanceFloat.toFixed(4)} ${assetLabel}</span>
             </div>
           </div>
