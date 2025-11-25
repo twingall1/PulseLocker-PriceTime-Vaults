@@ -740,10 +740,10 @@ function renderLocks() {
 
     const effectiveLine =
       lock.usedPrimary
-        ? `Effective: price=$${formatLockPrice(currentPriceFloat)} via <b>1°</b> feed`
+        ? `Effective price= $${formatLockPrice(currentPriceFloat)} via 𝟏° feed`
         : lock.usedBackup
-        ? `Effective: price=$${formatLockPrice(currentPriceFloat)} via <b>2°</b> feed`
-        : `Effective: price=$${formatLockPrice(currentPriceFloat)}`;
+        ? `Effective price= $${formatLockPrice(currentPriceFloat)} via 𝟐° feed`
+        : `Effective price= $${formatLockPrice(currentPriceFloat)}`;
 
     // Render card
     return `
