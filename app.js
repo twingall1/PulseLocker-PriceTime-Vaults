@@ -657,6 +657,15 @@ function renderLocks() {
 
   locksContainer.innerHTML = locks.map(lock => {
 
+    // 1. Check if card already exists
+    const existing = document.querySelector(`[data-addr="${lock.address}"]`);
+  
+    if (existing) {
+      // 2. Do NOT rebuild the address bar or header – return the existing card
+      return existing.outerHTML;
+    }
+
+
     if (lock.error) {
       return `
         <div class="card vault-card" data-addr="${lock.address}">
@@ -757,6 +766,7 @@ function renderLocks() {
         
           <!-- Address box -->
           <input class="mono"
+                 id="addr-${addrFull}"
                  value="${addrFull}"
                  readonly
                  style="
