@@ -210,40 +210,7 @@
       border: 1px solid #00b870 !important;
     }
   
-    .vault-header {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 6px;
-      white-space: nowrap;
-      align-items: flex-start; /* needed for aligned top rows */
-    }
-  
-    .vault-header-left {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: nowrap;
-    }
-  
-    .vault-header-actions {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        white-space: nowrap;
-        position: static !important;   /* remove forced shifting */
-        margin-left: 12px;             /* sits just right of PLS VAULT */
-    }
-  
-    /* Address bar size + ellipsis */
-    .vault-header-actions input {
-      flex: 0 0 auto !important;
-      width: 370px !important;
-      max-width: 370px !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-      white-space: nowrap !important;
-    }
+
   
     .copy-icon-btn {
       width: 28px;
@@ -383,23 +350,16 @@
       flex-direction: column;
     }
   
-    /* Make vault header one single inline row */
+    /* Clean vault header after merging sections */
     .vault-header {
       display: flex !important;
-      justify-content: flex-start !important;
       align-items: center !important;
-      gap: 12px !important; /* spacing between each item */
+      gap: 12px !important;
+      white-space: nowrap !important;
+      justify-content: flex-start !important;
       flex-wrap: nowrap !important;
     }
-    
-    /* Remove all positioning hacks from trio */
-    .vault-header-actions {
-      position: static !important;
-      margin-left: 12px !important; /* small gap after [LOCKED] */
-      display: flex !important;
-      align-items: center !important;
-      gap: 6px !important;
-    }
+
   </style>
 </head>
 
