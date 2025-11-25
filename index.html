@@ -383,7 +383,23 @@
       flex-direction: column;
     }
   </style>
-
+  /* Make vault header one single inline row */
+  .vault-header {
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 12px !important; /* spacing between each item */
+    flex-wrap: nowrap !important;
+  }
+  
+  /* Remove all positioning hacks from trio */
+  .vault-header-actions {
+    position: static !important;
+    margin-left: 12px !important; /* small gap after [LOCKED] */
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
 </head>
 
 <body>
