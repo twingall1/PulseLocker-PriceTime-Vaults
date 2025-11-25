@@ -332,9 +332,9 @@ async function refreshGlobalPrice() {
 
     html += `<div class="small" style="margin-top:8px;">`;
     if (chosenSource === "primary") {
-      html += `Effective price (logic): <b>$${formatLockPrice(chosenPriceFloat)}</b> via <b>1°</b> feed.`;
+      html += `Effective price (logic): <b>$${formatLockPrice(chosenPriceFloat)}</b> via 𝟏° feed.`;
     } else if (chosenSource === "backup") {
-      html += `Effective price (logic): <b>$${formatLockPrice(chosenPriceFloat)}</b> via <b>2°</b> feed.`;
+      html += `Effective price (logic): <b>$${formatLockPrice(chosenPriceFloat)}</b> via 𝟐° feed.`;
     } else {
       html += `No valid price feeds at this moment – only time unlock will work.`;
     }
@@ -344,15 +344,15 @@ async function refreshGlobalPrice() {
 
     let rawText = "";
     if (primaryInfo.ok) {
-      rawText += `<b>1°</b> raw 1e18: ${primaryInfo.priceBN.toString()}\n`;
+      rawText += `𝟏° raw 1e18: ${primaryInfo.priceBN.toString()}\n`;
     } else {
-      rawText += `<b>1°</b>: unavailable\n`;
+      rawText += `𝟏°: unavailable\n`;
     }
     if (cfg.backupPair) {
       if (backupInfo.ok) {
-        rawText += `<b>2°</b> raw 1e18: ${backupInfo.priceBN.toString()}`;
+        rawText += `𝟐° raw 1e18: ${backupInfo.priceBN.toString()}`;
       } else {
-        rawText += `<b>2°</b>: unavailable`;
+        rawText += `𝟐°: unavailable`;
       }
     }
     globalPriceRaw.textContent = rawText.trim();
@@ -795,11 +795,11 @@ function renderLocks() {
           <!-- COL 1: main info text (aligned colons, bold values) -->
           <div class="vault-col-main">
             <div class="col1-line">
-              target&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
+              target&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
               &nbsp;<span class="col1-value-bold">1 ${assetLabel} ≥ $${formatLockPrice(thresholdFloat)}</span>
             </div>
             <div class="col1-line">
-              current&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
+              current&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
               &nbsp;<span class="col1-value-bold">$${formatLockPrice(currentPriceFloat)}</span>
             </div>
             <div class="col1-line">
@@ -807,7 +807,7 @@ function renderLocks() {
               &nbsp;<span class="col1-value-bold">${formatTimestamp(lock.unlockTime)}</span>
             </div>
             <div class="col1-line">
-              locked&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
+              locked&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
               &nbsp;<span class="col1-value-bold">${balanceFloat.toFixed(4)} ${assetLabel}</span>
             </div>
           </div>
