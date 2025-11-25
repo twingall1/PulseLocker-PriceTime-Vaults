@@ -224,12 +224,15 @@ async function connect() {
     factoryContract = new ethersLib.Contract(FACTORY_ADDRESS, factoryAbi, signer);
 
     await refreshGlobalPrice();
-    await loadLocalVaults();
+    await loadLocalVaults();     // this already calls renderLocks() once
 
-    if (countdownInterval) clearInterval(countdownInterval);
-    countdownInterval = setInterval(() => {
-      if (locks.length) renderLocks();
-    }, 10000);
+    // Initial static render of all vault cards
+    renderLocks();
+
+    // Start dynamic refresh loops: time (1s) and price/feeds (5s)
+    startTimeRefresh();
+    setInterval(updateVaultPrices, 5000);
+
 
   } catch (err) {
     alert("Connection failed: " + err.message);
@@ -364,7 +367,7 @@ async function refreshGlobalPrice() {
   }
 }
 
-setInterval(refreshGlobalPrice, 10000);
+setInterval(refreshGlobalPrice, 5000);
 assetSelect.addEventListener("change", refreshGlobalPrice);
 
 async function computePairPriceAndLiquidity(pairAddr, lockToken, lockDecimals, quoteToken, quoteDecimals) {
@@ -861,15 +864,112 @@ function renderLocks() {
     `;
   }).join("");
 }
+// -----------------------------------------
+// TIME + PRICE REFRESH (no full card re-renders)
+// -----------------------------------------
+function startTimeRefresh() {
+  setInterval(() => {
+    if (!locks.length) return;
+    const nowTs = Math.floor(Date.now() / 1000);
+
+    for (const lock of locks) {
+      if (!lock.startTime || !lock.unlockTime || lock.unlockTime <= lock.startTime) continue;
+
+      const total    = lock.unlockTime - lock.startTime;
+      const done     = Math.min(nowTs, lock.unlockTime) - lock.startTime;
+      const pct      = Math.max(0, Math.min(100, (done / total) * 100));
+      const secsLeft = Math.max(0, lock.unlockTime - nowTs);
+
+      const card = document.querySelector(`.vault-card[data-addr="${lock.address}"]`);
+      if (!card) continue;
+
+      const barFill = card.querySelector(".time-progress-bar-fill");
+      const labelEl = card.querySelector(".vault-col-time .small:last-child");
+
+      if (barFill) barFill.style.width = `${pct.toFixed(1)}%`;
+      if (labelEl) labelEl.textContent = formatCountdownNumber(secsLeft) + " remaining";
+    }
+  }, 1000);
+}
+
+async function updateVaultPrices() {
+  if (!locks.length) return;
+
+  for (const lock of locks) {
+    const addr = lock.address;
+    const card = document.querySelector(`.vault-card[data-addr="${addr}"]`);
+    if (!card) continue;
+
+    let detail;
+    try {
+      const vault = new ethersLib.Contract(addr, vaultAbi, provider);
+      detail = await vault.priceDetail();
+    } catch {
+      continue;
+    }
+
+    const chosenPriceBN = detail[0];
+    const primaryOK     = detail[1];
+    const primaryPxBN   = detail[2];
+    const primaryResBN  = detail[3];
+    const backupOK      = detail[4];
+    const backupPxBN    = detail[5];
+    const backupResBN   = detail[6];
+    const usedPrimary   = detail[7];
+    const usedBackup    = detail[8];
+
+    const priceFloat = Number(ethersLib.utils.formatUnits(chosenPriceBN, 18));
+
+    // CURRENT price (col 1, second line span)
+    const priceSpan = card.querySelector(".vault-col-main .col1-line:nth-child(2) span.col1-value-bold");
+    if (priceSpan) priceSpan.textContent = `$${formatLockPrice(priceFloat)}`;
+
+    // PIE chart
+    const thresholdFloat = parseFloat(ethersLib.utils.formatUnits(lock.threshold, 18));
+    const pctGoal = Math.min(100, Math.max(0, (priceFloat / thresholdFloat) * 100));
+    const pie = card.querySelector(".price-goal-pie");
+    if (pie) {
+      pie.style.background = `conic-gradient(#22c55e ${pctGoal}%, #020617 ${pctGoal}%)`;
+    }
+
+    // FEED details (col 5)
+    const primaryPxFloat = Number(ethersLib.utils.formatUnits(primaryPxBN, 18));
+    const backupPxFloat  = Number(ethersLib.utils.formatUnits(backupPxBN, 18));
+
+    const pResFloat = quoteResToUsdFloat(primaryResBN, lock.primaryQuoteDecimals);
+    const bResFloat = quoteResToUsdFloat(backupResBN, lock.backupQuoteDecimals);
+
+    const feedsInner = card.querySelector(".vault-col-feeds > div");
+    if (feedsInner) {
+      let html = "";
+      if (primaryOK) {
+        html += `<b>1°</b> : $${formatLockPrice(primaryPxFloat)}, $reserves ≈ ${formatReserveK(pResFloat)}<br>`;
+      }
+      if (backupOK) {
+        html += `<b>2°</b> : $${formatLockPrice(backupPxFloat)}, $reserves ≈ ${formatReserveK(bResFloat)}<br>`;
+      }
+      if (usedPrimary) {
+        html += `Effective: price=$${formatLockPrice(priceFloat)} via 𝟏° feed`;
+      } else if (usedBackup) {
+        html += `Effective: price=$${formatLockPrice(priceFloat)} via 𝟐° feed`;
+      } else {
+        html += `Effective: feeds unavailable — using time unlock only`;
+      }
+      feedsInner.innerHTML = html;
+    }
+  }
+}
 
 // COLLAPSE / EXPAND
 function minimizeVault(addr) {
   setCollapsed(addr, true);
-  renderLocks();
+  const card = document.querySelector(`.vault-card[data-addr="${addr}"]`);
+  if (card) card.classList.add("collapsed");
 }
 function maximizeVault(addr) {
   setCollapsed(addr, false);
-  renderLocks();
+  const card = document.querySelector(`.vault-card[data-addr="${addr}"]`);
+  if (card) card.classList.remove("collapsed");
 }
 
 // WITHDRAW
