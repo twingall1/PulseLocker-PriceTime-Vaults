@@ -462,9 +462,26 @@
           Paste any supported vault address created by this factory.
         </div>
         <div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
+        
           <input id="manualVaultInput" type="text" placeholder="0x..."
                  style="flex:1 1 220px;min-width:200px;" />
+        
           <button id="addVaultBtn">Add</button>
+        
+          <!-- NEW: Restore button (snug right of ADD) -->
+          <button id="restoreVaultsBtn"
+                  style="
+                    background:#1e40af;
+                    color:white;
+                    padding:6px 12px;
+                    border-radius:6px;
+                    cursor:pointer;
+                    font-size:13px;
+                    white-space:nowrap;
+                  ">
+            Restore All Vaults
+          </button>
+        
         </div>
         <div id="manualAddStatus" class="small"></div>
       </div>
