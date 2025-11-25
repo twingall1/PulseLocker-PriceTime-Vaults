@@ -332,9 +332,9 @@ async function refreshGlobalPrice() {
 
     html += `<div class="small" style="margin-top:8px;">`;
     if (chosenSource === "primary") {
-      html += `Effective price (logic): <b>$${formatLockPrice(chosenPriceFloat)}</b> via 𝟏° feed.`;
+      html += `Effective price (logic): <b>$${formatLockPrice(chosenPriceFloat)}</b> via 𝟏° feed (larger USD-side reserves).`;
     } else if (chosenSource === "backup") {
-      html += `Effective price (logic): <b>$${formatLockPrice(chosenPriceFloat)}</b> via 𝟐° feed.`;
+      html += `Effective price (logic): <b>$${formatLockPrice(chosenPriceFloat)}</b> via 𝟐° feed(larger USD-side reserves).`;
     } else {
       html += `No valid price feeds at this moment – only time unlock will work.`;
     }
