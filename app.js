@@ -952,7 +952,7 @@ function startTimeRefresh() {
   }, 1000);
 }
 
-fasync function updateVaultPrices() {
+async function updateVaultPrices() {
   if (!locks.length) return;
 
   for (const lock of locks) {
