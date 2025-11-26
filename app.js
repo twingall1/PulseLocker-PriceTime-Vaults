@@ -49,7 +49,7 @@ function setCollapsed(addr, collapsed) {
 // -------------------------------
 // CONFIG
 // -------------------------------
-const FACTORY_ADDRESS = "0xB6c8CDCdbB2d4799fdb301F034EBAE39e61606f0".toLowerCase();
+const FACTORY_ADDRESS = "0xf6aDe1a6db5bD96aD782E7AA1F566D11166719F0".toLowerCase();
 
 const ADDR = {
   DAI:  "0xefD766cCb38EaF1dfd701853BFCe31359239F305".toLowerCase(),
