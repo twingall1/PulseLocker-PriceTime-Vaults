@@ -733,8 +733,12 @@ function renderLocks() {
     );
 
     // Status
+    // Truth: vault was withdrawn at least once
     const withdrawnTag = lock.withdrawn;
-    const canWithdraw = lock.canWithdraw && !lock.withdrawn;
+    
+    // New live behaviour
+    const hasBalance = !lock.balanceBN.isZero();
+    const canWithdraw = hasBalance;
 
     const status =
       withdrawnTag
