@@ -744,7 +744,7 @@ function renderLocks() {
 
     const status =
       withdrawnTag
-        ? '<span class="tag status-warn">✖ WITHDRAWN ✖</span>'
+        ? '<span class="tag status-warn">🪦 WITHDRAWN 🪦</span>'
         : canWithdraw
         ? '<span class="tag status-ok">✔ UNLOCKABLE ✔</span>'
         : '<span class="tag status-bad">🔒 LOCKED 🔒</span>';
