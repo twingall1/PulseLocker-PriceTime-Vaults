@@ -737,11 +737,8 @@ function renderLocks() {
     // Status
     // Truth: vault was withdrawn at least once
     const withdrawnTag = lock.withdrawn;
-    
-    // New live behaviour
     const hasBalance = !lock.balanceBN.isZero();
-    const canWithdraw = hasBalance;
-    // NEW — rescue button appears if withdrawn AND has balance
+    const canWithdraw = lock.canWithdraw && !withdrawnTag;
     const showRescue = withdrawnTag && hasBalance;
 
 
@@ -876,7 +873,7 @@ function renderLocks() {
               </button>
             ` : ``}
           
-            ${(withdrawnTag && hasBalance) ? `
+            ${(showRescue) ? `
               <button onclick="rescueVault('${addrFull}')"
                 style="background:#1d4ed8;color:white;">
                 Rescue
