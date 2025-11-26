@@ -35,7 +35,7 @@
       --subtext: #466078;
       --card-bg: #ffffff;
       --border: #d0e0f0;
-      --accent: #1f7aec;
+      --accent: #16a34a;   
       --accent-hover: #0059cc;
       --input-bg: #ffffff;
       --input-border: #b2c8dd;
@@ -393,20 +393,21 @@
     }
     /* Improve visibility of status tags in both themes */
     .tag {
-      color: var(--text) !important;
+      /* REMOVE the color line entirely */
+      /* color: var(--text) !important; */
       font-weight: 600;
       padding: 3px 10px;
       border-radius: 999px;
       font-size: 12px;
     }
     
-    /* Light theme contrast improvements */
+    /* Light theme tag background only (no text color here) */
     body.light-theme .tag {
-      background: #e7e7e7 !important;
-      border: 1px solid #d0d0d0 !important;
-      color: #000 !important;
+      background: #ffffffcc;
+      border: 1px solid #d0d0d0;
     }
-    /* Semantic colours for vault state */
+    
+    /* Semantic colours for vault state text */
     .status-bad {   /* LOCKED */
       color: #c62828 !important;   /* red */
     }
@@ -416,14 +417,7 @@
     }
     
     .status-warn {  /* WITHDRAWN */
-      color: #d4a017 !important;   /* yellow/gold */
-    }
-    
-    /* Light theme tag envelope (DON’T override text colour!) */
-    body.light-theme .tag {
-      background: #ffffffcc;     /* translucent white */
-      border: 1px solid #d0d0d0;
-      /* no color override */
+      color: #d4a017 !important;   /* gold/yellow */
     }
 
   </style>
