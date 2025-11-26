@@ -952,7 +952,7 @@ function startTimeRefresh() {
   }, 1000);
 }
 
-async function updateVaultPrices() {
+fasync function updateVaultPrices() {
   if (!locks.length) return;
 
   for (const lock of locks) {
@@ -960,6 +960,9 @@ async function updateVaultPrices() {
     const card = document.querySelector(`.vault-card[data-addr="${addr}"]`);
     if (!card) continue;
 
+    // ==========================================================
+    // 1) Refresh price + feed details
+    // ==========================================================
     let detail;
     try {
       const vault = new ethersLib.Contract(addr, vaultAbi, provider);
@@ -981,77 +984,150 @@ async function updateVaultPrices() {
     const priceFloat = Number(ethersLib.utils.formatUnits(chosenPriceBN, 18));
 
     // CURRENT price (col 1, second line span)
-    const priceSpan = card.querySelector(".vault-col-main .col1-line:nth-child(2) span.col1-value-bold");
+    const priceSpan = card.querySelector(
+      ".vault-col-main .col1-line:nth-child(2) span.col1-value-bold"
+    );
     if (priceSpan) priceSpan.textContent = `$${formatLockPrice(priceFloat)}`;
 
     // PIE chart
-    const thresholdFloat = parseFloat(ethersLib.utils.formatUnits(lock.threshold, 18));
-    const pctGoal = Math.min(100, Math.max(0, (priceFloat / thresholdFloat) * 100));
+    const thresholdFloat = parseFloat(
+      ethersLib.utils.formatUnits(lock.threshold, 18)
+    );
+    const pctGoal = Math.min(
+      100,
+      Math.max(0, (priceFloat / thresholdFloat) * 100)
+    );
     const pie = card.querySelector(".price-goal-pie");
     if (pie) {
       pie.style.background = `conic-gradient(#22c55e ${pctGoal}%, #020617 ${pctGoal}%)`;
     }
 
     // FEED details (col 5)
-    const primaryPxFloat = Number(ethersLib.utils.formatUnits(primaryPxBN, 18));
-    const backupPxFloat  = Number(ethersLib.utils.formatUnits(backupPxBN, 18));
+    const primaryPxFloat = Number(
+      ethersLib.utils.formatUnits(primaryPxBN, 18)
+    );
+    const backupPxFloat = Number(
+      ethersLib.utils.formatUnits(backupPxBN, 18)
+    );
 
-    const pResFloat = quoteResToUsdFloat(primaryResBN, lock.primaryQuoteDecimals);
-    const bResFloat = quoteResToUsdFloat(backupResBN, lock.backupQuoteDecimals);
+    const pResFloat = quoteResToUsdFloat(
+      primaryResBN,
+      lock.primaryQuoteDecimals
+    );
+    const bResFloat = quoteResToUsdFloat(
+      backupResBN,
+      lock.backupQuoteDecimals
+    );
 
     const feedsInner = card.querySelector(".vault-col-feeds > div");
     if (feedsInner) {
       let html = "";
       if (primaryOK) {
-        html += `<b>1°</b> : $${formatLockPrice(primaryPxFloat)}, $reserves ≈ ${formatReserveK(pResFloat)}<br>`;
+        html += `<b>1°</b> : $${formatLockPrice(
+          primaryPxFloat
+        )}, $reserves ≈ ${formatReserveK(pResFloat)}<br>`;
       }
       if (backupOK) {
-        html += `<b>2°</b> : $${formatLockPrice(backupPxFloat)}, $reserves ≈ ${formatReserveK(bResFloat)}<br>`;
+        html += `<b>2°</b> : $${formatLockPrice(
+          backupPxFloat
+        )}, $reserves ≈ ${formatReserveK(bResFloat)}<br>`;
       }
       if (usedPrimary) {
-        html += `Effective: price=$${formatLockPrice(priceFloat)} via 𝟏° feed`;
+        html += `Effective: price=$${formatLockPrice(
+          priceFloat
+        )} via 𝟏° feed`;
       } else if (usedBackup) {
-        html += `Effective: price=$${formatLockPrice(priceFloat)} via 𝟐° feed`;
+        html += `Effective: price=$${formatLockPrice(
+          priceFloat
+        )} via 𝟐° feed`;
       } else {
         html += `Effective: feeds unavailable — using time unlock only`;
       }
       feedsInner.innerHTML = html;
     }
-        // === NEW: refresh locked balance every 5 seconds ===
+
+    // ==========================================================
+    // 2) Refresh locked balance every 5 seconds
+    // ==========================================================
     try {
       let newBalanceBN;
       if (lock.isNative) {
         newBalanceBN = await provider.getBalance(addr);
       } else {
-        const erc20 = new ethersLib.Contract(lock.lockToken, erc20Abi, provider);
+        const erc20 = new ethersLib.Contract(
+          lock.lockToken,
+          erc20Abi,
+          provider
+        );
         newBalanceBN = await erc20.balanceOf(addr);
       }
-    
-      // Correct decimals
-      const balanceDisplayDecimals = (lock.assetLabel === "HEX") ? 8 : 18;
+
+      lock.balanceBN = newBalanceBN;
+
+      const balanceDisplayDecimals =
+        lock.assetLabel === "HEX" ? 8 : 18;
       const newBalanceFloat = parseFloat(
-        ethersLib.utils.formatUnits(newBalanceBN, balanceDisplayDecimals)
+        ethersLib.utils.formatUnits(
+          newBalanceBN,
+          balanceDisplayDecimals
+        )
       );
-    
-      // Locate the "locked" line (4th line in col1)
+
       const balanceSpan = card.querySelector(
         ".vault-col-main .col1-line:nth-child(4) span.col1-value-bold"
       );
-    
+
       if (balanceSpan) {
-        balanceSpan.textContent =
-          `${newBalanceFloat.toFixed(4)} ${lock.assetLabel}`;
+        balanceSpan.textContent = `${newBalanceFloat.toFixed(
+          4
+        )} ${lock.assetLabel}`;
       }
-    
-      // Save latest balance so future refreshes have accurate local state
-      lock.balanceBN = newBalanceBN;
-    
     } catch (err) {
       console.error("Balance refresh error:", err);
     }
 
-  }
+    // ==========================================================
+    // 3) Refresh Withdraw / Rescue button states every 5s (NEW)
+    // ==========================================================
+    const withdrawnTag = lock.withdrawn;
+    const hasBalance = !lock.balanceBN.isZero();
+
+    // Real on-chain unlock condition
+    const canWithdraw =
+      lock.canWithdraw && !withdrawnTag;
+
+    // Rescue appears ONLY if vault is withdrawn AND has balance
+    const showRescue = withdrawnTag && hasBalance;
+
+    const buttonCol = card.querySelector(".vault-col-buttons");
+    if (!buttonCol) continue;
+
+    // BUTTON ORDER:
+    // (1) Withdraw
+    // (2) Rescue
+    // (3) Remove
+    const withdrawBtn = buttonCol.querySelector("button:nth-child(1)");
+    const rescueBtn = buttonCol.querySelector("button:nth-child(2)");
+
+    // WITHDRAW BUTTON: shown only when NOT withdrawn
+    if (withdrawBtn) {
+      if (!withdrawnTag) {
+        withdrawBtn.style.display = "inline-block";
+        withdrawBtn.disabled = !canWithdraw;
+      } else {
+        withdrawBtn.style.display = "none";
+      }
+    }
+
+    // RESCUE BUTTON: shown only WHEN withdrawn + balance > 0
+    if (rescueBtn) {
+      rescueBtn.style.display = showRescue
+        ? "inline-block"
+        : "none";
+    }
+  } // END for(lock)
 }
+
 
 // COLLAPSE / EXPAND
 function minimizeVault(addr) {
