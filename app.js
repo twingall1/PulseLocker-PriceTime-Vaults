@@ -744,10 +744,10 @@ function renderLocks() {
 
     const status =
       withdrawnTag
-        ? '<span class="tag status-warn">WITHDRAWN</span>'
+        ? '<span class="tag status-warn">✖ WITHDRAWN ✖</span>'
         : canWithdraw
-        ? '<span class="tag status-ok">UNLOCKABLE</span>'
-        : '<span class="tag status-bad">LOCKED</span>';
+        ? '<span class="tag status-ok">🔓 UNLOCKABLE 🔓</span>'
+        : '<span class="tag status-bad">🔒 LOCKED 🔒</span>';
 
     // Price goal %
     let priceGoalPct = 0;
@@ -867,25 +867,26 @@ function renderLocks() {
           <div class="vault-col-buttons">
           
             ${(!withdrawnTag) ? `
-              <button onclick="withdrawVault('${addrFull}')"
+              <button data-role="withdraw" onclick="withdrawVault('${addrFull}')"
                 ${canWithdraw ? "" : "disabled"}>
                 Withdraw
               </button>
             ` : ``}
           
             ${(showRescue) ? `
-              <button onclick="rescueVault('${addrFull}')"
+              <button data-role="rescue" onclick="rescueVault('${addrFull}')"
                 style="background:#1d4ed8;color:white;">
                 Rescue
               </button>
             ` : ``}
           
-            <button onclick="removeVault('${addrFull}')"
+            <button data-role="remove" onclick="removeVault('${addrFull}')"
               style="background:#b91c1c;">
               Remove
             </button>
           
           </div>
+
 
           <!-- COL 3: pie chart -->
           <div class="vault-col-pie">
@@ -1106,8 +1107,10 @@ async function updateVaultPrices() {
     // (1) Withdraw
     // (2) Rescue
     // (3) Remove
-    const withdrawBtn = buttonCol.querySelector("button:nth-child(1)");
-    const rescueBtn = buttonCol.querySelector("button:nth-child(2)");
+    const withdrawBtn = buttonCol.querySelector('button[data-role="withdraw"]');
+    const rescueBtn   = buttonCol.querySelector('button[data-role="rescue"]');
+    const removeBtn   = buttonCol.querySelector('button[data-role="remove"]'); // always exists
+
 
     // WITHDRAW BUTTON: shown only when NOT withdrawn
     if (withdrawBtn) {
