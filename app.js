@@ -869,8 +869,9 @@ function renderLocks() {
           <!-- COL 2: buttons (bottom-aligned) -->
           <div class="vault-col-buttons">
           
-            ${(!withdrawnTag && canWithdraw) ? `
-              <button onclick="withdrawVault('${addrFull}')">
+            ${(!withdrawnTag) ? `
+              <button onclick="withdrawVault('${addrFull}')"
+                ${canWithdraw ? "" : "disabled"}>
                 Withdraw
               </button>
             ` : ``}
