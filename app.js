@@ -279,6 +279,13 @@ function quoteResToUsdFloat(quoteResBN, quoteDecimals) {
 // GLOBAL PRICE FEED
 async function refreshGlobalPrice() {
   try {
+    // NEW: short-circuit if no provider yet
+    if (!provider) {
+      globalPriceDiv.textContent = "Connect wallet to fetch live prices.";
+      globalPriceRaw.textContent = "";
+      return;
+    }
+
     const assetCode = assetSelect.value;
     const cfg = ASSETS[assetCode];
     if (!cfg) return;
@@ -1141,46 +1148,69 @@ async function updateVaultPrices() {
     }
 
     // ==========================================================
-    // 3) Refresh Withdraw / Rescue button states every 5s (NEW)
+    // 3) (NEW) Dynamic unlock logic + status refresh
     // ==========================================================
     const withdrawnTag = lock.withdrawn;
-    const hasBalance = !lock.balanceBN.isZero();
-
-    // Real on-chain unlock condition
-    const canWithdraw =
-      lock.canWithdraw && !withdrawnTag;
-
-    // Rescue appears ONLY if vault is withdrawn AND has balance
-    const showRescue = withdrawnTag && hasBalance;
-
+    const hasBalance   = !lock.balanceBN.isZero();
+    
+    const nowTs = Math.floor(Date.now() / 1000);
+    
+    // Local recomputation of unlockability (same logic as Solidity)
+    const viaTime  = nowTs >= lock.unlockTime;
+    const viaPrice = priceFloat > 0 &&
+                     thresholdFloat > 0 &&
+                     priceFloat >= thresholdFloat;
+    
+    const canWithdrawUI = !withdrawnTag && (viaTime || viaPrice);
+    
+    // Maintain memory sync
+    lock.canWithdraw = canWithdrawUI;
+    
+    // Update STATUS TAG
+    const statusTag = card.querySelector(".tag");
+    if (statusTag) {
+      if (withdrawnTag) {
+        statusTag.classList.remove("status-ok", "status-bad");
+        statusTag.classList.add("status-warn");
+        statusTag.textContent = "✖ WITHDRAWN ✖";
+        card.classList.remove("vault-unlockable");
+      } else if (canWithdrawUI) {
+        statusTag.classList.remove("status-bad", "status-warn");
+        statusTag.classList.add("status-ok");
+        statusTag.textContent = "✔ UNLOCKABLE ✔";
+        card.classList.add("vault-unlockable");
+      } else {
+        statusTag.classList.remove("status-ok", "status-warn");
+        statusTag.classList.add("status-bad");
+        statusTag.textContent = "🔒 LOCKED 🔒";
+        card.classList.remove("vault-unlockable");
+      }
+    }
+    
+    // BUTTON CONTAINER
     const buttonCol = card.querySelector(".vault-col-buttons");
     if (!buttonCol) continue;
-
-    // BUTTON ORDER:
-    // (1) Withdraw
-    // (2) Rescue
-    // (3) Remove
+    
     const withdrawBtn = buttonCol.querySelector('button[data-role="withdraw"]');
     const rescueBtn   = buttonCol.querySelector('button[data-role="rescue"]');
     const removeBtn   = buttonCol.querySelector('button[data-role="remove"]'); // always exists
-
-
-    // WITHDRAW BUTTON: shown only when NOT withdrawn
-    if (withdrawBtn) {
-      if (!withdrawnTag) {
+    
+    // WITHDRAW button
+    if (withdrawnTag) {
+      if (withdrawBtn) withdrawBtn.style.display = "none";
+    } else {
+      if (withdrawBtn) {
         withdrawBtn.style.display = "inline-block";
-        withdrawBtn.disabled = !canWithdraw;
-      } else {
-        withdrawBtn.style.display = "none";
+        withdrawBtn.disabled = !canWithdrawUI;
       }
     }
-
-    // RESCUE BUTTON: shown only WHEN withdrawn + balance > 0
+    
+    // RESCUE button (only AFTER withdrawn)
     if (rescueBtn) {
-      rescueBtn.style.display = showRescue
-        ? "inline-block"
-        : "none";
+      const showRescue = withdrawnTag && hasBalance;
+      rescueBtn.style.display = showRescue ? "inline-block" : "none";
     }
+
   } // END for(lock)
 }
 
