@@ -626,16 +626,23 @@ createForm.addEventListener("submit", async (e) => {
   }
 });
 
+
+
+
+
+
 // LOAD LOCAL VAULTS
 async function loadLocalVaults() {
   const list = getLocalVaults();
+  
   if (!list.length) {
     locksContainer.textContent = "No locks found.";
     locks = [];
     return;
   }
 
-  locksContainer.textContent = "Loading vaults...";
+  locksContainer.classList.add("is-loading");
+  
   const results = [];
 
   for (const addr of list) {
@@ -772,6 +779,7 @@ async function loadLocalVaults() {
   locks = results;
   renderLocks();
   updateVaultPrices(); 
+  locksContainer.classList.remove("is-loading");
 }
 
 function detectAssetLabel(lockTokenAddr, isNative) {
@@ -1344,9 +1352,19 @@ async function rescueVault(addr) {
 // REMOVE VAULT
 function removeVault(addr) {
   const lower = addr.toLowerCase();
+
+  // 1. Update localStorage
   const list = getLocalVaults().filter(a => a.toLowerCase() !== lower);
   localStorage.setItem(localKey(), JSON.stringify(list));
-  loadLocalVaults();
+
+  // 2. Remove card from DOM only
+  const card = document.querySelector(`.vault-card[data-addr="${lower}"]`);
+  if (card) {
+    card.style.opacity = "0";
+    setTimeout(() => card.remove(), 150);
+  }
+
+  // 3. Do NOT reload everything
 }
 
 // COPY ADDRESS (with popup)
