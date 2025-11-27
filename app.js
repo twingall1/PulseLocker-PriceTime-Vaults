@@ -916,10 +916,11 @@ function renderLocks() {
           <!-- COL 3: pie chart -->
           <div class="vault-col-pie">
             <div class="small" style="text-align:center;">Price goal</div>
-            <div class="price-goal-pie"
-                 title="${priceGoalPct.toFixed(2)}%"
-                 style="background:conic-gradient(#22c55e ${priceGoalPct}%, #020617 0);">
+            <div class="pie-wrapper">
+              <div class="price-goal-pie"></div>
+              <div class="pie-tooltip">${priceGoalPct.toFixed(2)}%</div>
             </div>
+
 
           </div>
 
@@ -951,6 +952,23 @@ function renderLocks() {
       </div>
     `;
   }).join("");
+// --- Attach instant pie tooltip handlers AFTER all cards are in DOM ---
+const cards = locksContainer.querySelectorAll(".vault-card");
+
+cards.forEach(card => {
+  const pieWrapper = card.querySelector(".pie-wrapper");
+  const tooltip = card.querySelector(".pie-tooltip");
+
+  if (pieWrapper && tooltip) {
+    pieWrapper.addEventListener("mouseenter", () => {
+      tooltip.style.opacity = "1";
+    });
+    pieWrapper.addEventListener("mouseleave", () => {
+      tooltip.style.opacity = "0";
+    });
+  }
+});
+
 }
 // -----------------------------------------
 // TIME + PRICE REFRESH (no full card re-renders)
@@ -1028,7 +1046,10 @@ async function updateVaultPrices() {
     const pie = card.querySelector(".price-goal-pie");
     if (pie) {
       pie.style.background = `conic-gradient(#22c55e ${pctGoal}%, #020617 ${pctGoal}%)`;
-      pie.setAttribute("title", `${pctGoal.toFixed(2)}%`);
+    }
+    const tooltip = card.querySelector(".pie-tooltip");
+    if (tooltip) {
+      tooltip.textContent = `${pctGoal.toFixed(2)}%`;
     }
 
     // FEED details (col 5)
