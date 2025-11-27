@@ -250,6 +250,7 @@ async function connect() {
 
     // Initial static render of all vault cards
     renderLocks();
+    updateVaultPrices(); //add this to force update at start so no delays in pie chart color fill
 
     // Start dynamic refresh loops: time (1s) and price/feeds (5s)
     startTimeRefresh();
@@ -702,6 +703,7 @@ async function loadLocalVaults() {
 
   locks = results;
   renderLocks();
+  updateVaultPrices(); 
 }
 
 function detectAssetLabel(lockTokenAddr, isNative) {
