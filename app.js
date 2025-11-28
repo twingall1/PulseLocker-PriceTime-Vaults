@@ -729,27 +729,38 @@ createForm.addEventListener("submit", async (e) => {
 
 function moveVaultUp(addr) {
   const list = getLocalVaults();
-  const idx = list.findIndex(a => a.toLowerCase() === addr.toLowerCase());
+  const lower = addr.toLowerCase();
+  const idx = list.indexOf(lower);
+
   if (idx > 0) {
-    const temp = list[idx - 1];
-    list[idx - 1] = list[idx];
-    list[idx] = temp;
+    // Swap in local array
+    [list[idx - 1], list[idx]] = [list[idx], list[idx - 1]];
+
+    // Save new order
     localStorage.setItem(localKey(), JSON.stringify(list));
-    loadLocalVaults();
+
+    // Instantly re-render cards (NO RPC)
+    renderLocks();
   }
 }
 
 function moveVaultDown(addr) {
   const list = getLocalVaults();
-  const idx = list.findIndex(a => a.toLowerCase() === addr.toLowerCase());
+  const lower = addr.toLowerCase();
+  const idx = list.indexOf(lower);
+
   if (idx < list.length - 1) {
-    const temp = list[idx + 1];
-    list[idx + 1] = list[idx];
-    list[idx] = temp;
+    // Swap in local array
+    [list[idx + 1], list[idx]] = [list[idx], list[idx + 1]];
+
+    // Save
     localStorage.setItem(localKey(), JSON.stringify(list));
-    loadLocalVaults();
+
+    // Instant re-render
+    renderLocks();
   }
 }
+
 
 // LOAD LOCAL VAULTS
 async function loadLocalVaults() {
