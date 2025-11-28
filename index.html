@@ -453,7 +453,13 @@
     }
     .vault-card.dragging {
       opacity: 0.4;
+      position: absolute;
+      z-index: 9999;
+      width: calc(100% - 4px);
+      pointer-events: none;
+      transform: scale(1.03); /* small lift effect */
     }
+
     
     .vault-card.drag-over {
       border: 2px dashed var(--accent);
