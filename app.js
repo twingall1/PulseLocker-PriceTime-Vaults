@@ -329,6 +329,33 @@ async function connect() {
 }
 connectBtn.addEventListener("click", connect);
 
+// ---------------------------------------------------
+// AUTO-REFRESH WALLET UI ON NETWORK / ACCOUNT CHANGES
+// ---------------------------------------------------
+if (window.ethereum) {
+  // Handle network changes
+  window.ethereum.on("chainChanged", async () => {
+    // Reload provider + network UI
+    await connect();
+  });
+
+  // Handle account changes
+  window.ethereum.on("accountsChanged", async () => {
+    // If no accounts, reset UI (optional)
+    const accounts = await window.ethereum.request({ method: "eth_accounts" });
+    if (!accounts.length) {
+      walletSpan.textContent = "";
+      connectBtn.textContent = "Connect Wallet";
+      connectBtn.disabled = false;
+      return;
+    }
+
+    // Otherwise reconnect normally
+    await connect();
+  });
+}
+
+
 // PRICE HELPERS
 function computeDisplayDecimals(lockDecimals, quoteDecimals) {
   return 18 + quoteDecimals - lockDecimals;
