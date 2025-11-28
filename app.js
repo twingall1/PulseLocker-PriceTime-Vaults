@@ -729,27 +729,42 @@ createForm.addEventListener("submit", async (e) => {
 
 function moveVaultUp(addr) {
   const list = getLocalVaults();
-  const idx = list.findIndex(a => a.toLowerCase() === addr.toLowerCase());
+  const lower = addr.toLowerCase();
+  const idx = list.indexOf(lower);
+
   if (idx > 0) {
-    const temp = list[idx - 1];
-    list[idx - 1] = list[idx];
-    list[idx] = temp;
+    // reorder localStorage list
+    [list[idx - 1], list[idx]] = [list[idx], list[idx - 1]];
     localStorage.setItem(localKey(), JSON.stringify(list));
-    loadLocalVaults();
+
+    // reorder the in-memory locks array
+    [locks[idx - 1], locks[idx]] = [locks[idx], locks[idx - 1]];
+
+    // re-render sync (no RPC)
+    renderLocks();
+
+    // force instant pie refresh (prevents pie lag)
+    updateVaultPrices();
   }
 }
 
 function moveVaultDown(addr) {
   const list = getLocalVaults();
-  const idx = list.findIndex(a => a.toLowerCase() === addr.toLowerCase());
+  const lower = addr.toLowerCase();
+  const idx = list.indexOf(lower);
+
   if (idx < list.length - 1) {
-    const temp = list[idx + 1];
-    list[idx + 1] = list[idx];
-    list[idx] = temp;
+    [list[idx], list[idx + 1]] = [list[idx + 1], list[idx]];
     localStorage.setItem(localKey(), JSON.stringify(list));
-    loadLocalVaults();
+
+    // reorder memory copy too
+    [locks[idx], locks[idx + 1]] = [locks[idx + 1], locks[idx]];
+
+    renderLocks();
+    updateVaultPrices();
   }
 }
+
 
 // LOAD LOCAL VAULTS
 async function loadLocalVaults() {
