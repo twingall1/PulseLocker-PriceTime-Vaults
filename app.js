@@ -769,6 +769,8 @@ function moveVaultDown(addr) {
 // LOAD LOCAL VAULTS
 async function loadLocalVaults() {
   const list = getLocalVaults();
+    // NEW: indicate loading when wallet is connected & data is incoming
+  locksContainer.textContent = "Loading...";
   
   if (!list.length) {
     locksContainer.textContent = "No locks found.";
@@ -983,7 +985,7 @@ function renderLocks() {
         ? '<span class="tag status-warn">✖ WITHDRAWN ✖</span>'
         : canWithdraw
         ? '<span class="tag status-ok">✔ UNLOCKABLE ✔</span>'
-        : '<span class="tag status-bad">🔒 __LOCKED__ 🔒</span>';
+        : '<span class="tag status-bad">🔒 LOCKED 🔒</span>';
 
     // Price goal %
     let priceGoalPct = 0;
