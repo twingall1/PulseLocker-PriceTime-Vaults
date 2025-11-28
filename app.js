@@ -278,6 +278,10 @@ async function connect() {
     await provider.send("eth_requestAccounts", []);
     signer = provider.getSigner();
     userAddress = (await signer.getAddress()).toLowerCase();
+    
+    // NEW: update button state
+    connectBtn.textContent = "Connected ✓";
+    connectBtn.disabled = true;
 
     const net = await provider.getNetwork();
     walletSpan.textContent = userAddress;
