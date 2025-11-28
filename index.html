@@ -490,24 +490,27 @@
     
     /* Tooltip */
     .disconnect-tooltip {
-      position:absolute;
-      top:-28px;
-      left:50%;
-      transform:translateX(-50%);
-      background:#000000dd;
-      color:white;
-      padding:3px 8px;
-      font-size:11px;
-      border-radius:4px;
-      white-space:nowrap;
-      pointer-events:none;
-      opacity:0;
-      transition:opacity 0.05s linear;
+      position: absolute;
+      top: 50%;
+      left: calc(100% + 8px); /* right of the icon */
+      transform: translateY(-50%);
+      
+      background: #000000dd;
+      color: white;
+      padding: 3px 8px;
+      font-size: 11px;
+      border-radius: 4px;
+      white-space: nowrap;
+    
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.05s linear;
     }
     
     .disconnect-icon:hover .disconnect-tooltip {
-      opacity:1;
+      opacity: 1;
     }
+
     .reorder-buttons {
       display:flex;
       flex-direction:column;
