@@ -328,16 +328,52 @@ async function connect() {
   }
 }
 connectBtn.addEventListener("click", connect);
+// ---------------------------------------------------
+// AUTO UI UPDATE ON NETWORK CHANGE (NO POPUPS)
+// ---------------------------------------------------
+if (window.ethereum) {
+  window.ethereum.on("chainChanged", async (chainIdHex) => {
+
+    const chainId = parseInt(chainIdHex, 16);
+
+    if (chainId === 369) {
+      networkInfo.innerHTML = `
+        <span style="color:#6b7280;">Connected (chainId: 369)</span>
+      `;
+      connectBtn.textContent = "Connected ✓";
+      connectBtn.disabled = true;
+
+    } else {
+      networkInfo.innerHTML = `
+        <span style="color:#c62828; font-weight:700;">
+          Connected (chainId: ${chainId}) — WRONG NETWORK
+        </span>
+        <button onclick="switchToPulseChain()"
+                style="margin-left:8px;padding:4px 8px;
+                       background:#c62828;color:#fff;border-radius:6px;">
+          Switch to PulseChain
+        </button>
+      `;
+      connectBtn.textContent = "Connected ✓";
+      connectBtn.disabled = false;
+    }
+
+    refreshGlobalPrice();  // update the feed instantly
+
+    // refresh wallet address label
+    const accounts = await window.ethereum.request({ method: "eth_accounts" });
+    if (accounts.length) {
+      walletSpan.textContent = accounts[0].toLowerCase();
+    }
+  });
+}
+
 
 // ---------------------------------------------------
 // AUTO-REFRESH WALLET UI ON NETWORK / ACCOUNT CHANGES
 // ---------------------------------------------------
 if (window.ethereum) {
-  // Handle network changes
-  window.ethereum.on("chainChanged", async () => {
-    // Reload provider + network UI
-    await connect();
-  });
+
 
   // Handle account changes
   window.ethereum.on("accountsChanged", async () => {
