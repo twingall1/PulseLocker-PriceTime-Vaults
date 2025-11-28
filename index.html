@@ -514,29 +514,30 @@
     .reorder-buttons {
       display:flex;
       flex-direction:column;
-      gap:4px;
+      gap:2px;
       margin-left:4px;
     }
     
     .reorder-up,
     .reorder-down {
-      width: 20px;
-      height: 20px;
-      background: var(--copy-bg);
-      color: white;
-      font-size: 12px;
-      border-radius: 4px;
+      width: 14px;               /* smaller button */
+      height: 14px;
+      background: #3b3f4a;       /* subtle neutral grey (dark mode friendly) */
+      color: #d1d5db;            /* soft grey text instead of white */
+      font-size: 10px;           /* smaller arrow */
+      border-radius: 3px;        /* smaller, subtle rounding */
       display:flex;
       align-items:center;
       justify-content:center;
-      cursor: pointer;            /* <-- FIX */
-      user-select: none;          /* prevents text cursor */
-      transition: background 0.15s;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s, transform 0.1s ease;
     }
-    
+    /* Hover effect: subtle, not loud */
     .reorder-up:hover,
     .reorder-down:hover {
-      background: var(--copy-bg-hover);
+      background: #4b5563;       /* slightly lighter grey, tasteful */
+      transform: scale(1.08);    /* tiny pop */
     }
     .wallet-info {
       display: flex;
