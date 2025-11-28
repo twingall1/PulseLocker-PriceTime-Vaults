@@ -1043,8 +1043,7 @@ function renderLocks() {
         <!-- ROW 1: HEADER -->
         <div class="vault-header">
         
-          <span class="vault-asset-label ${assetLabel === 'pDAI' ? 'vault-label-pdai' : ''}">
-
+          <span class="vault-asset-label ${assetLabel !== 'pDAI' ? 'label-wide' : ''}">
             ${TOKEN_ICONS[assetLabel] ? `<img src="${TOKEN_ICONS[assetLabel]}" class="token-mini">` : ""}
             ${assetLabel} VAULT
           </span>
