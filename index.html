@@ -457,6 +457,30 @@
       background: #16a34a;
       cursor: default;
     }
+        /* Floating dragged card */
+    .drag-ghost {
+      position: absolute;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.9;
+      transform: scale(1.03);
+      transition: transform 0.1s ease;
+    }
+    
+    /* Placeholder that takes space */
+    .vault-placeholder {
+      background: transparent;
+      border: 2px dashed var(--accent);
+      border-radius: 12px;
+      height: 140px; /* approximate card height */
+      margin-bottom: 12px;
+    }
+    
+    /* Smooth sliding */
+    .vault-card {
+      transition: transform 0.15s ease;
+    }
+
 
   </style>
 </head>
