@@ -643,12 +643,34 @@ function enableDragAndDrop() {
     card.addEventListener("dragend", () => {
       card.classList.remove("dragging");
       document.querySelectorAll(".drag-over").forEach(el => el.classList.remove("drag-over"));
+      document.querySelectorAll(".vault-placeholder").forEach(el => el.remove());
     });
 
-    // Highlight target card
     card.addEventListener("dragover", (e) => {
       e.preventDefault();
-      card.classList.add("drag-over");
+    
+      const dragging = document.querySelector(".vault-card.dragging");
+      if (!dragging) return;
+    
+      const bounding = card.getBoundingClientRect();
+      const offset = e.clientY - bounding.top;
+    
+      // If we're dragging *down*, insert below this card; if dragging *up*, insert above.
+      const shouldPlaceAfter = offset > bounding.height / 2;
+    
+      // Remove any existing placeholder
+      let existing = locksContainer.querySelector(".vault-placeholder");
+      if (existing) existing.remove();
+    
+      // Create placeholder
+      const placeholder = document.createElement("div");
+      placeholder.className = "vault-placeholder";
+    
+      if (shouldPlaceAfter) {
+        card.insertAdjacentElement("afterend", placeholder);
+      } else {
+        card.insertAdjacentElement("beforebegin", placeholder);
+      }
     });
 
     card.addEventListener("dragleave", () => {
@@ -658,13 +680,30 @@ function enableDragAndDrop() {
     // Handle drop
     card.addEventListener("drop", (e) => {
       e.preventDefault();
-      card.classList.remove("drag-over");
-
+    
       const draggedAddr = e.dataTransfer.getData("text/plain");
-      const targetAddr = card.dataset.addr;
-
-      reorderVaults(draggedAddr, targetAddr);
+    
+      // Determine final target position based on placeholder
+      const placeholder = locksContainer.querySelector(".vault-placeholder");
+      const allCards = [...locksContainer.querySelectorAll(".vault-card")];
+    
+      // Remove placeholder visually
+      if (placeholder) {
+        placeholder.replaceWith(document.querySelector(`[data-addr="${draggedAddr}"]`));
+      }
+    
+      // Get the new order from DOM directly
+      const newOrder = [...locksContainer.querySelectorAll(".vault-card")].map(
+        c => c.dataset.addr.toLowerCase()
+      );
+    
+      // Save this order to localStorage
+      localStorage.setItem(localKey(), JSON.stringify(newOrder));
+    
+      // Re-render cleanly
+      loadLocalVaults();
     });
+
   });
 }
 
