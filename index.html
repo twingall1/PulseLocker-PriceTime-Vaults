@@ -451,31 +451,8 @@
       pointer-events: none;
       transition: opacity 0.2s;
     }
-    .vault-card.dragging {
-      opacity: 0.4;
-    }
-
     
-    .vault-card.drag-over {
-      border: 2px dashed var(--accent);
-    }
-    /* Smooth slide animations, and old rules */
-    .vault-card {
-      transition:
-        box-shadow 0.3s,
-        border 0.3s,
-        transform 0.15s ease,
-        opacity 0.15s ease;
-    }
 
-    
-    /* The placeholder that takes the dragged card's space */
-    .vault-placeholder {
-      height: 140px;   /* approximate card height */
-      border: 2px dashed var(--accent);
-      margin-bottom: 12px;
-      border-radius: 12px;
-    }
     button.connected {
       background: #16a34a;
       cursor: default;
