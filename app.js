@@ -695,110 +695,6 @@ createForm.addEventListener("submit", async (e) => {
 
 
 
-function enableDragAndDrop() {
-  const cards = document.querySelectorAll(".vault-card");
-
-  cards.forEach(card => {
-    // Start dragging
-    card.addEventListener("dragstart", (e) => {
-
-      card.classList.add("dragging");
-      e.dataTransfer.setData("text/plain", card.dataset.addr);
-      e.dataTransfer.effectAllowed = "move";
-    });
-
-    // End dragging
-    card.addEventListener("dragend", () => {
-      card.classList.remove("dragging");
-      card.style.width = "";
-      card.style.left = "";
-      card.style.top = "";
-
-      document.querySelectorAll(".drag-over").forEach(el => el.classList.remove("drag-over"));
-      document.querySelectorAll(".vault-placeholder").forEach(el => el.remove());
-    });
-
-    card.addEventListener("dragover", (e) => {
-      e.preventDefault();
-    
-      const dragging = document.querySelector(".vault-card.dragging");
-      if (!dragging) return;
-    
-      // NEW: Prevent dragged card from targeting itself
-      if (card === dragging) return;
-    
-      const bounding = card.getBoundingClientRect();
-      const offset = e.clientY - bounding.top;
-    
-      // Remove old placeholder
-      document.querySelectorAll(".vault-placeholder").forEach(el => el.remove());
-    
-      // Create new placeholder
-      const placeholder = document.createElement("div");
-      placeholder.className = "vault-placeholder";
-    
-      if (offset > bounding.height / 2) {
-        card.insertAdjacentElement("afterend", placeholder);
-      } else {
-        card.insertAdjacentElement("beforebegin", placeholder);
-      }
-    });
-
-    card.addEventListener("dragleave", () => {
-      card.classList.remove("drag-over");
-    });
-
-    // Handle drop
-    card.addEventListener("drop", (e) => {
-      e.preventDefault();
-    
-      const draggedAddr = e.dataTransfer.getData("text/plain");
-    
-      // Determine final target position based on placeholder
-      const placeholder = locksContainer.querySelector(".vault-placeholder");
-      const allCards = [...locksContainer.querySelectorAll(".vault-card")];
-    
-      // Remove placeholder visually
-      if (placeholder) {
-        placeholder.replaceWith(document.querySelector(`[data-addr="${draggedAddr}"]`));
-      }
-    
-      // Get the new order from DOM directly
-      const newOrder = [...locksContainer.querySelectorAll(".vault-card")].map(
-        c => c.dataset.addr.toLowerCase()
-      );
-    
-      // Save this order to localStorage
-      localStorage.setItem(localKey(), JSON.stringify(newOrder));
-    
-      // Re-render cleanly
-      loadLocalVaults();
-    });
-
-  });
-}
-
-function reorderVaults(draggedAddr, targetAddr) {
-  const list = getLocalVaults();
-  const dragged = draggedAddr.toLowerCase();
-  const target  = targetAddr.toLowerCase();
-
-  const fromIndex = list.findIndex(a => a.toLowerCase() === dragged);
-  const toIndex   = list.findIndex(a => a.toLowerCase() === target);
-
-  if (fromIndex < 0 || toIndex < 0) return;
-
-  // Move item inside array
-  const [moved] = list.splice(fromIndex, 1);
-  list.splice(toIndex, 0, moved);
-
-  // Save new order
-  localStorage.setItem(localKey(), JSON.stringify(list));
-
-  // Re-render locks in new order (smooth and clean)
-  loadLocalVaults();
-}
-
 
 
 // LOAD LOCAL VAULTS
@@ -1069,8 +965,7 @@ function renderLocks() {
     // Render card
     return `
       <div class="card vault-card ${collapsedCls} ${canWithdraw ? 'vault-unlockable' : ''}"
-           data-addr="${addrFull}"
-           draggable="true">
+           data-addr="${addrFull}">
 
 
         <!-- ROW 1: HEADER -->
@@ -1221,7 +1116,7 @@ requestAnimationFrame(() => {
     }
   });
 });
-enableDragAndDrop();
+
 }
 // -----------------------------------------
 // TIME + PRICE REFRESH (no full card re-renders)
