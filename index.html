@@ -508,6 +508,33 @@
     .disconnect-icon:hover .disconnect-tooltip {
       opacity:1;
     }
+    .reorder-buttons {
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      margin-left:4px;
+    }
+    
+    .reorder-up,
+    .reorder-down {
+      width: 20px;
+      height: 20px;
+      background: var(--copy-bg);
+      color: white;
+      font-size: 12px;
+      border-radius: 4px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor: pointer;            /* <-- FIX */
+      user-select: none;          /* prevents text cursor */
+      transition: background 0.15s;
+    }
+    
+    .reorder-up:hover,
+    .reorder-down:hover {
+      background: var(--copy-bg-hover);
+    }
 
   </style>
 </head>
