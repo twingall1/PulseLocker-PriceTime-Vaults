@@ -8,7 +8,6 @@
 
   <style>
     :root {
-      /* dark theme */
       --bg: #050815;
       --text: #f3f4f6;
       --subtext: #9ca3af;
@@ -27,15 +26,14 @@
       --min-btn: #facc15;
       --min-btn-hover: #fbbf24;
     }
-  
+
     body.light-theme {
-      /* light theme */
       --bg: #f5f9ff;
       --text: #1a1a1a;
       --subtext: #466078;
       --card-bg: #ffffff;
       --border: #d0e0f0;
-      --accent: #16a34a;   
+      --accent: #16a34a;
       --accent-hover: #0059cc;
       --input-bg: #ffffff;
       --input-border: #b2c8dd;
@@ -48,7 +46,7 @@
       --min-btn: #eab308;
       --min-btn-hover: #ca8a04;
     }
-  
+
     body {
       font-family: system-ui, sans-serif;
       background: var(--bg);
@@ -56,15 +54,15 @@
       margin: 0;
       padding: 16px;
     }
-  
+
     h1, h2 {
       margin-top: 0;
-      margin-bottom: 6px;   /* tighten bottom space */
-      font-size: 18px;      /* your new smaller title size */
-      line-height: 1.2;     /* optional: tighten vertical spacing */
+      margin-bottom: 6px;
+      font-size: 18px;
+      line-height: 1.2;
       color: var(--text);
     }
-  
+
     .card {
       background: var(--card-bg);
       border-radius: 12px;
@@ -72,11 +70,13 @@
       margin-bottom: 6px;
       border: 1px solid var(--border);
       box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+      transition: transform 0.2s ease, opacity 0.2s ease;
     }
+
     body.light-theme .card {
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
-  
+
     input, button, select {
       padding: 6px 8px;
       border-radius: 8px;
@@ -85,7 +85,7 @@
       color: var(--text);
       font-size: 14px;
     }
-  
+
     button {
       cursor: pointer;
       border: none;
@@ -94,39 +94,44 @@
       font-weight: 600;
       transition: background 0.15s;
     }
+
     button:hover { background: var(--accent-hover); }
     button[disabled] { opacity: 0.5; cursor: not-allowed; }
-  
+
     select { cursor: pointer; }
-  
+
     .small {
       font-size: 12px;
       color: var(--subtext);
     }
-  
+
     .tag {
-      padding: 2px 8px;
+      padding: 3px 10px;
       border-radius: 999px;
-      font-size: 11px;
+      font-size: 12px;
+      font-weight: 600;
       background: #11182733;
       border: 1px solid var(--border);
       margin-right: 6px;
       margin-top: 4px;
       display: inline-block;
     }
-  
-    .status-ok { color: var(--status-ok); }
-    .status-warn { color: var(--status-warn); }
-    .status-bad { color: var(--status-bad); }
-  
+
+    body.light-theme .tag {
+      background: #ffffffcc;
+      border: 1px solid #d0d0d0;
+    }
+
+    .status-bad { color: #c62828 !important; }
+    .status-ok { color: #1f7a34 !important; }
+    .status-warn { color: #d4a017 !important; }
+
     .mono {
       font-family: Courier, monospace;
       font-size: 13px;
-      user-select: text !important;
       color: #a5b4fc;
     }
-  
-    /* HEADER */
+
     .header-row {
       display: flex;
       align-items: center;
@@ -135,302 +140,171 @@
       flex-wrap: wrap;
       margin-bottom: 12px;
     }
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .header-title-block {
-      display: flex;
-      flex-direction: column;
-    }
-    .header-subtitle {
-      font-size: 12px;
-      color: var(--subtext);
-    }
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-  
+
     .theme-toggle {
+      background: #334155;
       padding: 4px 8px;
       font-size: 12px;
-      background: #334155;
     }
+
     body.light-theme .theme-toggle {
       background: #e5e7eb;
       color: #111827;
     }
-  
+
     .wallet-info {
-        display: flex;
-        flex-direction: row;
-        gap: 2px;
-        align-items: flex-end;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: flex-end;
     }
-  
-    /* ===== 3 COLUMN MOVE ===== */
+
+    .wallet-top-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .disconnect-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--copy-bg);
+      border-radius: 6px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      position:relative;
+      transition: background 0.15s;
+    }
+
+    .disconnect-icon:hover { background: var(--copy-bg-hover); }
+
+    .disconnect-icon svg {
+      width: 16px;
+      height: 16px;
+      fill: white;
+    }
+
+    .disconnect-tooltip {
+      position: absolute;
+      top: 50%;
+      left: calc(100% + 8px);
+      transform: translateY(-50%);
+      background: #000000dd;
+      color: white;
+      padding: 3px 8px;
+      font-size: 11px;
+      border-radius: 4px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.05s linear;
+      white-space: nowrap;
+    }
+
+    .disconnect-icon:hover .disconnect-tooltip {
+      opacity: 1;
+    }
+
+    /* ============================
+       Layout (3 columns)
+    ============================ */
     .three-col-grid {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       gap: 16px;
-      align-items: start;
     }
-  
-    .col-1, .col-2, .col-3 {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-  
-    .about-onecol {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-  
+
     @media (max-width: 1100px) {
       .three-col-grid {
         grid-template-columns: 1fr;
       }
     }
-  
-    /* LOCKS */
-    #locksContainer {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-  
-    .vault-unlockable {
-      box-shadow: 0 0 16px 3px rgba(0,200,120,0.35);
-      border: 1px solid #00b870 !important;
-    }
 
-    .copy-icon-btn {
-      position: relative; 
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--copy-bg);
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.15s;
-      margin-left: 6px !important;
-    }
-    .copy-icon-btn:hover {
-      background: var(--copy-bg-hover);
-    }
-    .copy-icon-btn svg {
-      width: 16px;
-      height: 16px;
-      fill: #fff;
-    }
-  
-    .minimize-btn,
-    .maximize-btn {
-      background: var(--min-btn);
-      color: #111827;
-      font-size: 11px;
-      padding: 4px 6px;
-      border-radius: 6px;
-      flex: 0 0 auto;
-      margin-left: 6px !important;
-    }
-  
-    /* FIVE COLUMN BODY */
-    .vault-body {
-      display: inline-flex;
-      align-items: flex-start;
-      gap: 24px;
-      white-space: nowrap;
-      width: 100%;
-    }
-  
-    .vault-col-main {
-      flex: 0 1 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      white-space: nowrap;
-    }
-  
-    .col1-line {
-      font-size: 13px;
-      white-space: nowrap;
-    }
-    .col1-value-bold {
-      font-weight: 600;
-    }
-  
-    .vault-col-buttons {
-      flex: 0 0 auto;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      gap: 6px;
-    }
-  
-    .vault-col-pie {
-      flex: 0 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      white-space: nowrap;
-    }
-  
-    .price-goal-pie {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: #020617;
-      border: 1px solid #000;
-    }
-  
-    .vault-col-time {
-      flex: 0 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      white-space: nowrap;
-    }
-  
-    .time-progress-bar-bg {
-      width: 100%;
-      height: 8px;
-      border-radius: 999px;
-      background: #1f2937;
-      overflow: hidden;
-    }
-  
-    .time-progress-bar-fill {
-      height: 100%;
-      border-radius: 999px;
-      background: #22c55e;
-      width: 0%;
-      transition: width 0.3s linear;
-    }
-  
-    .vault-col-feeds {
-      flex: 0 0 auto;
-      white-space: nowrap;
-      min-width: 200px;
-    }
-  
-    .vault-card.collapsed .vault-body {
-      display: none;
-    }
-    .vault-card.collapsed .minimize-btn {
-      display: none;
-    }
-    .vault-card .maximize-btn {
-      display: none;
-    }
-    .vault-card.collapsed .maximize-btn {
-      display: inline-flex;
-    }
-        /* Lower the Withdraw / Remove button column slightly */
-    .vault-col-buttons {
-        margin-top: 11px;   /* try 6–12px for fine control */
-    }
-        /* Lower the PRIMARY / BACKUP / EFFECTIVE blurb slightly */
-    .vault-col-feeds {
-        margin-top: 11px;   /* adjust 4–14px as needed */
-    }
-    .form-row {
-      margin-bottom: 12px;
-      display: flex;
-      flex-direction: column;
-    }
-  
-        /* Clean vault header after merging sections */
-    .vault-header {
-      display: flex !important;
-      align-items: center !important;
-      gap: 12px !important;
-      white-space: nowrap !important;
-      justify-content: flex-start !important;
-      flex-wrap: nowrap !important;
-    }
-        /* Horizontal rows for Create New Lock */
     .form-row-h {
       display: flex;
       align-items: center;
       gap: 12px;
       margin-bottom: 12px;
     }
-    
+
     .form-row-h label {
-      min-width: 120px;   /* keeps all labels aligned nicely */
+      min-width: 120px;
       white-space: nowrap;
-    }
-    .form-row-h select,
-    .form-row-h input[type="text"],
-    .form-row-h input[type="datetime-local"] {
-      width: 160px;          /* adjust: 160–220px looks best */
-      max-width: 160px;      
-    }
-    .copy-popup {
-      position: absolute;
-      top: -24px;   /* move up */
-      left: 20px;   /* move right */
-      background: #4ade80;
-      color: #000;
-      padding: 2px 6px;
-      font-size: 11px;
-      border-radius: 4px;
-      white-space: nowrap;
-    }
-    /* Improve visibility of status tags in both themes */
-    .tag {
-      /* REMOVE the color line entirely */
-      /* color: var(--text) !important; */
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-size: 12px;
     }
 
-    
-    /* Light theme tag background only (no text color here) */
-    body.light-theme .tag {
-      background: #ffffffcc;
-      border: 1px solid #d0d0d0;
+    .label-wide {
+      padding-right: 7px;
+      padding-left: 4px;
     }
-    
-    /* Semantic colours for vault state text */
-    .status-bad {   /* LOCKED */
-      color: #c62828 !important;   /* red */
+
+    /* ============================
+       Vault cards
+    ============================ */
+    #locksContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
-    
-    .status-ok {    /* UNLOCKABLE */
-      color: #1f7a34 !important;   /* green */
+
+    .vault-card {
+      transition: opacity 0.15s ease, transform 0.15s ease;
     }
-    
-    .status-warn {  /* WITHDRAWN */
-      color: #d4a017 !important;   /* gold/yellow */
+
+    .vault-card.collapsed .vault-body {
+      display: none;
     }
-    .token-mini {
-      width: 20px;
-      height: 20px;
-      object-fit: contain;
-      vertical-align: middle;
-      margin-right: 6px;
-      margin-left: 2px;
+
+    .vault-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+      flex-wrap: nowrap;
     }
-    /* Instant pie tooltip */
+
+    .vault-body {
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 24px;
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    .vault-col-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .vault-col-buttons {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 11px;
+    }
+
+    .vault-col-pie {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .price-goal-pie {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 1px solid #000;
+      background: #020617;
+    }
+
     .pie-wrapper {
       position: relative;
       display: inline-block;
     }
-    
+
     .pie-tooltip {
       position: absolute;
       background: #000000dd;
@@ -447,26 +321,33 @@
       opacity: 0;
       transition: opacity 0.05s linear;
     }
-    #locksContainer.is-loading {
-      opacity: 0.4;
-      pointer-events: none;
-      transition: opacity 0.2s;
-    }
-    
 
-    button.connected {
-      background: #16a34a;
-      cursor: default;
+    .vault-col-time {
+      white-space: nowrap;
     }
 
-    
-    
-    /* Smooth sliding */
-    .vault-card {
-      transition: transform 0.15s ease;
+    .time-progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #1f2937;
+      overflow: hidden;
     }
 
-    .disconnect-icon {
+    .time-progress-bar-fill {
+      height: 100%;
+      background: #22c55e;
+      border-radius: 999px;
+      transition: width 0.3s linear;
+    }
+
+    .vault-col-feeds {
+      min-width: 200px;
+      margin-top: 11px;
+    }
+
+    .copy-icon-btn {
+      position: relative;
       width: 28px;
       height: 28px;
       background: var(--copy-bg);
@@ -475,41 +356,30 @@
       align-items:center;
       justify-content:center;
       cursor:pointer;
-      position:relative;
+      margin-left: 6px;
       transition: background 0.15s;
     }
-    
-    .disconnect-icon:hover {
+
+    .copy-icon-btn:hover {
       background: var(--copy-bg-hover);
     }
-    
-    .disconnect-icon svg {
+
+    .copy-icon-btn svg {
       width: 16px;
       height: 16px;
-      fill: white;
+      fill: #fff;
     }
-    
-    /* Tooltip */
-    .disconnect-tooltip {
+
+    .copy-popup {
       position: absolute;
-      top: 50%;
-      left: calc(100% + 8px); /* right of the icon */
-      transform: translateY(-50%);
-      
-      background: #000000dd;
-      color: white;
-      padding: 3px 8px;
+      top: -24px;
+      left: 20px;
+      background: #4ade80;
+      color: #000;
+      padding: 2px 6px;
       font-size: 11px;
       border-radius: 4px;
       white-space: nowrap;
-    
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.05s linear;
-    }
-    
-    .disconnect-icon:hover .disconnect-tooltip {
-      opacity: 1;
     }
 
     .reorder-buttons {
@@ -518,50 +388,34 @@
       gap:2px;
       margin-left:4px;
     }
-    
+
     .reorder-up,
     .reorder-down {
-      width: 14px;               /* smaller button */
+      width: 14px;
       height: 14px;
-      background: #3b3f4a;       /* subtle neutral grey (dark mode friendly) */
-      color: #d1d5db;            /* soft grey text instead of white */
-      font-size: 10px;           /* smaller arrow */
-      border-radius: 3px;        /* smaller, subtle rounding */
+      background: #3b3f4a;
+      color: #d1d5db;
+      font-size: 10px;
+      border-radius: 3px;
       display:flex;
       align-items:center;
       justify-content:center;
       cursor: pointer;
-      user-select: none;
       transition: background 0.15s, transform 0.1s ease;
     }
-    /* Hover effect: subtle, not loud */
+
     .reorder-up:hover,
     .reorder-down:hover {
-      background: #4b5563;       /* slightly lighter grey, tasteful */
-      transform: scale(1.08);    /* tiny pop */
+      background: #4b5563;
+      transform: scale(1.08);
     }
-    .wallet-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      align-items: flex-start;
-    }
-    
-    /* First row = horizontal */
-    .wallet-top-row {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 6px;
-    }
-    .label-wide {
-      padding-right: 7px;
-      padding-left: 4px;
-    }
-            /* Make LOCKED tag wider */
-    .tag.status-bad {
-      padding-left: 19px;
-      padding-right: 19px;
+
+    .token-mini {
+      width:20px;
+      height:20px;
+      object-fit:contain;
+      vertical-align:middle;
+      margin:0 6px;
     }
   </style>
 </head>
@@ -569,25 +423,21 @@
 <body>
   <header class="header-row">
     <div class="header-left">
-      <img src="PulseChainLogoTransparent.png"
-           alt="PLS"
-           style="height:38px;width:auto;">
+      <img src="PulseChainLogoTransparent.png" alt="PLS" style="height:38px;width:auto;">
       <div class="header-title-block">
         <div><b>Price + Time Vaults (PLS / pDAI / HEX)</b></div>
-        <div class="header-subtitle">
-          Discipline vaults with price-mediated unlock &amp; time backup
+        <div class="header-subtitle small">
+          Discipline vaults with price-mediated unlock & time backup
         </div>
       </div>
     </div>
 
     <div class="header-right">
       <button id="themeToggle" class="theme-toggle">🌙 Night</button>
+
       <div class="wallet-info">
-      
-        <!-- ROW 1: Connect + Disconnect side by side -->
         <div class="wallet-top-row">
           <button id="connectBtn">Connect Wallet</button>
-      
           <div id="disconnectBtn" class="disconnect-icon" style="display:none;">
             <svg viewBox="0 0 24 24">
               <path d="M10 17l1.41-1.41L7.83 12l3.58-3.59L10 7l-5 5 5 5zm4-12h6v14h-6v2h8V3h-8v2z"/>
@@ -595,30 +445,19 @@
             <div class="disconnect-tooltip">Disconnect</div>
           </div>
         </div>
-      
-        <!-- ROW 2: Address -->
+
         <span id="walletAddress" class="mono"></span>
-      
-        <!-- ROW 3: Network state -->
         <div class="small" id="networkInfo"></div>
-      
       </div>
-
-
     </div>
   </header>
 
-
-  <!-- === THREE COLUMN LAYOUT === -->
   <div class="three-col-grid">
-
     <!-- COLUMN 1 -->
     <div class="col-1">
-
       <div class="card">
         <h2>Create New Lock</h2>
         <form id="createForm">
-        
           <div class="form-row-h">
             <label>Lock Token</label>
             <select id="assetSelect">
@@ -627,66 +466,58 @@
               <option value="HEX">HEX (token)</option>
             </select>
           </div>
-        
+
           <div class="form-row-h">
             <label>Target price ($)</label>
             <input id="targetPrice" type="text" placeholder="0.0100" required />
           </div>
-        
+
           <div class="form-row-h">
             <label>Unlock Time</label>
             <input id="unlockDateTime" type="datetime-local" required />
             <button type="submit" id="createBtn" style="margin-left:12px;">Create Vault</button>
           </div>
-        
+
           <div id="createStatus" class="small" style="margin-top:6px;"></div>
-        
         </form>
-
-
       </div>
 
       <div class="card">
         <h2>Add Vault Address Manually</h2>
         <div class="small">
-          Paste any supported vault address created by this factory.
+          Paste any supported vault created by this factory.
         </div>
+
         <div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
-        
           <input id="manualVaultInput" type="text" placeholder="0x..."
-                 style="flex:1 1 220px;min-width:200px;" />
-        
+                 style="flex:1;min-width:200px;" />
           <button id="addVaultBtn">Add</button>
-        
-          <!-- NEW: Restore button (snug right of ADD) -->
+
           <button id="restoreVaultsBtn"
-                  style="
-                    background:#1e40af;
-                    color:white;
-                    padding:6px 12px;
-                    border-radius:6px;
-                    cursor:pointer;
-                    font-size:13px;
-                    white-space:nowrap;
-                  ">
+            style="
+              background:#1e40af;
+              color:white;
+              padding:6px 12px;
+              border-radius:6px;
+              cursor:pointer;
+              font-size:13px;
+              white-space:nowrap;">
             Restore All Vaults
           </button>
-        
         </div>
+
         <div id="manualAddStatus" class="small"></div>
       </div>
-
     </div>
-
 
     <!-- COLUMN 2 -->
     <div class="col-2">
       <div class="card">
         <h2>Global Price Feed</h2>
         <div class="small" style="margin-bottom:6px;">
-          Source: PulseX <b>pools</b> for the selected asset.<br>
-          Each asset uses a primary (<b>1°</b>) &amp; backup (<b>2°</b>) feed.<br>
-          Feeds chosen by USD-normalized liquidity.<br>
+          Source: PulseX pools for the selected asset.<br>
+          Uses primary (1°) & backup (2°) feeds.<br>
+          Feeds chosen by USD-normalized liquidity.<br><br>
           Pair address:<br>
           <span id="pairAddress" class="mono"></span>
         </div>
@@ -695,36 +526,29 @@
       </div>
     </div>
 
-
     <!-- COLUMN 3 -->
     <div class="col-3">
       <div class="card">
         <h2>About This App</h2>
-        <div class="small about-onecol">
-          <ul style="margin:0; padding-left:18px;">
-            <li>Create <b>immutable vaults</b> for PLS, pDAI, or HEX.</li>
-            <li>Tokens lock until your <b>USD price</b> target OR time unlock.</li>
-            <li>Feeds from PulseX pools (PLS/DAI, pDAI/DAI, HEX/USDC+DAI).</li>
-            <li>Contract logic lives fully on-chain (no admin keys).</li>
-            <li>Thresholds are <b>USD × 1e18</b> per 1 token.</li>
-            <li>Time unlock always works even if feeds fail.</li>
-            <li>Vaults can be restored anytime from the on-chain registry.</li>
-            <li>Each vault is intended for a single price/time lock cycle.</li>
-            <li>Funds re-deposited after 1st withdrawal do <b>NOT</b> re-lock.</li>
-            <li>Withdrawn vaults re-deposited to show a <b>Rescue</b> button.</li>
+        <div class="small">
+          <ul style="margin:0;padding-left:18px;">
+            <li>Immutable vaults for PLS, pDAI, or HEX.</li>
+            <li>Unlocks on USD price threshold or time.</li>
+            <li>Feeds from PulseX pools.</li>
+            <li>No admin keys; all logic on-chain.</li>
+            <li>Thresholds are USD × 1e18 per 1 token.</li>
+            <li>Time unlock is unbrickable.</li>
+            <li>Factory registry enables vault restore.</li>
+            <li>Single-use vaults; no re-lock.</li>
+            <li>Post-withdraw deposits require Rescue.</li>
           </ul>
-        
-          <div class="fee-note" style="margin-top:6px;">
-            ⚠ A 0.5% fee is charged on successful withdrawal.
+          <div style="margin-top:6px;">
+            ⚠ 0.5% fee on successful withdrawal.
           </div>
         </div>
-
       </div>
     </div>
-
   </div>
-  <!-- === END GRID === -->
-
 
   <div class="card">
     <h2>Your Locks</h2>
@@ -733,6 +557,5 @@
 
   <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="app.js"></script>
-
 </body>
 </html>
