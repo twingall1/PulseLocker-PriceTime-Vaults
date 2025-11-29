@@ -1186,7 +1186,7 @@ function renderSingleVault(lock) {
           </div>
         
           <div class="col1-line">
-            time&nbsp;unlock:
+            time&nbsp;unlock&nbsp;:
             &nbsp;<span class="col1-value-bold">${formatTimestamp(lock.unlockTime)}</span>
           </div>
         
