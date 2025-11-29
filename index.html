@@ -160,9 +160,12 @@
     }
 
     .wallet-top-row {
-      display: flex;
-      gap: 6px;
-      align-items: center;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .theme-toggle {
+      margin-top:0 !important;
     }
 
     .disconnect-icon {
@@ -417,6 +420,17 @@
       vertical-align:middle;
       margin:0 6px;
     }
+    .minmax-btn {
+      background: var(--min-btn);
+      color: #111827;
+      font-size: 11px;
+      padding: 3px 6px;
+      border-radius: 6px;
+    }
+    .minmax-btn:hover {
+      background: var(--min-btn-hover);
+    }
+
   </style>
 </head>
 
@@ -433,10 +447,11 @@
     </div>
 
     <div class="header-right">
-      <button id="themeToggle" class="theme-toggle">🌙 Night</button>
+      
 
       <div class="wallet-info">
         <div class="wallet-top-row">
+          <button id="themeToggle" class="theme-toggle">🌙 Night</button>
           <button id="connectBtn">Connect Wallet</button>
           <div id="disconnectBtn" class="disconnect-icon" style="display:none;">
             <svg viewBox="0 0 24 24">
