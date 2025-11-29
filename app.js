@@ -1119,9 +1119,7 @@ function renderSingleVault(lock) {
   return `
     <div class="card vault-card ${collapsedCls}" data-addr="${addrFull}">
       <div class="vault-header">
-        <span class="vault-asset-label ${
-          assetLabel !== "pDAI" ? "label-wide" : ""
-        }">
+        <span class="vault-asset-label label-${assetLabel}">
           ${
             TOKEN_ICONS[assetLabel]
               ? `<img src="${TOKEN_ICONS[assetLabel]}" class="token-mini">`
