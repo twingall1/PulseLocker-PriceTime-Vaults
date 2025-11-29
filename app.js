@@ -1153,8 +1153,11 @@ function renderSingleVault(lock) {
           </svg>
         </div>
 
-        <button class="minimize-btn" onclick="minimizeVault('${addrFull}')">▲ Min</button>
-        <button class="maximize-btn" onclick="maximizeVault('${addrFull}')">▼ Max</button>
+        <button class="minmax-btn"
+                onclick="toggleVault('${addrFull}')">
+          ${isCollapsed(addrFull) ? "▼ Max" : "▲ Min"}
+        </button>
+
 
         <div class="reorder-buttons">
           ${
@@ -1491,6 +1494,21 @@ function maximizeVault(addr) {
   setCollapsed(addr, false);
   const card = document.querySelector(`.vault-card[data-addr="${addr}"]`);
   if (card) card.classList.remove("collapsed");
+}
+
+function toggleVault(addr) {
+  const lower = addr.toLowerCase();
+  const nowCollapsed = isCollapsed(lower);
+  setCollapsed(lower, !nowCollapsed);
+
+  const card = document.querySelector(`.vault-card[data-addr="${lower}"]`);
+  if (!card) return;
+
+  card.classList.toggle("collapsed", !nowCollapsed);
+
+  // Update the button label dynamically
+  const btn = card.querySelector(".minmax-btn");
+  if (btn) btn.textContent = !nowCollapsed ? "▼ Max" : "▲ Min";
 }
 
 // -------------------------------
