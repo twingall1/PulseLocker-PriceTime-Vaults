@@ -927,23 +927,24 @@ async function loadOneVault(addr) {
   }
 }
 
-// Load *all* from local storage — ONLY called on initial connect
+// Load *all* from local storage – ONLY called on initial connect
 async function loadLocalVaults() {
   const list = getLocalVaults();
+
   if (!list.length) {
     locks = [];
     locksContainer.textContent = "No locks found.";
     return;
   }
 
-  const results = [];
-  for (const addr of list) {
-    const lock = await loadOneVault(addr);
-    results.push(lock);
-  }
+  // 🚀 PARALLEL LOAD (Option B)
+  const results = await Promise.all(
+    list.map(addr => loadOneVault(addr))
+  );
 
   locks = results;
 }
+
 
 // Insert a newly-rendered card DOM node at the correct position
 function insertVaultCardInOrder(addr, cardHtml) {
