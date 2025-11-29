@@ -1025,463 +1025,167 @@ async function refreshSingleVault(addr) {
   updateVaultPrices();
 }
 // -------------------------------
-// RENDERING
-// -------------------------------
-function renderSingleVault(lock) {
-  if (lock.error) {
-    return `
-      <div class="card vault-card" data-addr="${lock.address}">
-        <div class="small">Error loading vault at ${lock.address}</div>
-        <button onclick="removeVault('${lock.address}')"
-                style="margin-top:10px;background:#b91c1c;">
-          Remove
-        </button>
-      </div>
-    `;
-  }
-
-  const assetLabel = lock.assetLabel;
-  const addrFull = lock.address;
-  const collapsedCls = isCollapsed(addrFull) ? "collapsed" : "";
-
-  const thresholdFloat = parseFloat(
-    ethersLib.utils.formatUnits(lock.threshold, 18)
-  );
-  const currentPriceFloat =
-    lock.priceValid && lock.chosenPriceBN.gt(0)
-      ? parseFloat(ethersLib.utils.formatUnits(lock.chosenPriceBN, 18))
-      : 0;
-
-  const balanceDisplayDecimals = assetLabel === "HEX" ? 8 : 18;
-  const balanceFloat = parseFloat(
-    ethersLib.utils.formatUnits(lock.balanceBN, balanceDisplayDecimals)
-  );
-
-  const withdrawnTag = lock.withdrawn;
-  const hasBalance = !lock.balanceBN.isZero();
-  const canWithdraw = lock.canWithdraw && !withdrawnTag;
-  const showRescue = withdrawnTag && hasBalance;
-
-  const status = withdrawnTag
-    ? '<span class="tag status-warn">✖ WITHDRAWN ✖</span>'
-    : canWithdraw
-    ? '<span class="tag status-ok">✔ UNLOCKABLE ✔</span>'
-    : '<span class="tag status-bad">🔒 LOCKED 🔒</span>';
-
-  const nowTs = Math.floor(Date.now() / 1000);
-  let timeGoalPct = 0;
-  let timeLabel = "";
-
-  if (lock.startTime && lock.unlockTime && lock.unlockTime > lock.startTime) {
-    const total = lock.unlockTime - lock.startTime;
-    const done = Math.min(nowTs, lock.unlockTime) - lock.startTime;
-    timeGoalPct = Math.max(0, Math.min(100, (done / total) * 100));
-    const secsLeft = Math.max(0, lock.unlockTime - nowTs);
-    timeLabel = formatCountdownNumber(secsLeft) + " remaining";
-  } else {
-    timeGoalPct = 0;
-    timeLabel = "N/A";
-  }
-  const timeBarStyle = `width:${timeGoalPct.toFixed(1)}%;`;
-
-  const thresholdPct =
-    thresholdFloat > 0 && currentPriceFloat > 0
-      ? Math.min(100, Math.max(0, (currentPriceFloat / thresholdFloat) * 100))
-      : 0;
-
-  const primaryPriceFloat = lock.primaryValid
-    ? parseFloat(ethersLib.utils.formatUnits(lock.primaryPriceBN, 18))
-    : 0;
-
-  const backupPriceFloat = lock.backupValid
-    ? parseFloat(ethersLib.utils.formatUnits(lock.backupPriceBN, 18))
-    : 0;
-
-  const primaryResFloat = lock.primaryQuoteResBN.gt(0)
-    ? quoteResToUsdFloat(lock.primaryQuoteResBN, lock.primaryQuoteDecimals)
-    : 0;
-
-  const backupResFloat = lock.backupQuoteResBN.gt(0)
-    ? quoteResToUsdFloat(lock.backupQuoteResBN, lock.backupQuoteDecimals)
-    : 0;
-
-  const effectiveLine = lock.usedPrimary
-    ? `Effective price= $${formatLockPrice(
-        currentPriceFloat
-      )} via 𝟏° feed`
-    : lock.usedBackup
-    ? `Effective price= $${formatLockPrice(
-        currentPriceFloat
-      )} via 𝟐° feed`
-    : `Effective price= feeds unavailable — using time unlock only`;
-
-  return `
-    <div class="card vault-card ${collapsedCls}" data-addr="${addrFull}">
-      <div class="vault-header">
-        <span class="vault-asset-label ${
-          assetLabel !== "pDAI" ? "label-wide" : ""
-        }">
-          ${
-            TOKEN_ICONS[assetLabel]
-              ? `<img src="${TOKEN_ICONS[assetLabel]}" class="token-mini">`
-              : ""
-          }
-          ${assetLabel} VAULT
-        </span>
-
-        ${status}
-
-        <input class="mono"
-               value="${addrFull}"
-               readonly
-               style="
-                 background:var(--input-bg);
-                 color:#a5b4fc;
-                 border:1px solid var(--input-border);
-                 padding:3px 4px;
-                 border-radius:6px;
-                 width: 360px;
-                 max-width:360px;
-                 overflow:hidden;
-                 text-overflow:ellipsis;
-                 white-space:nowrap;
-               " />
-
-        <div class="copy-icon-btn" onclick="copyAddr('${addrFull}', event)">
-          <svg viewBox="0 0 24 24">
-            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-          </svg>
-        </div>
-
-        <button class="minimize-btn" onclick="minimizeVault('${addrFull}')">▲ Min</button>
-        <button class="maximize-btn" onclick="maximizeVault('${addrFull}')">▼ Max</button>
-
-        <div class="reorder-buttons">
-          ${
-            locks.findIndex((l) => l.address === addrFull) > 0
-              ? `<div class="reorder-up" onclick="moveVaultUp('${addrFull}')">▲</div>`
-              : ``
-          }
-          ${
-            locks.findIndex((l) => l.address === addrFull) <
-            locks.length - 1
-              ? `<div class="reorder-down" onclick="moveVaultDown('${addrFull}')">▼</div>`
-              : ``
-          }
-        </div>
-      </div>
-
-      <div class="vault-body">
-        <div class="vault-col-main">
-          <div class="col1-line">
-            target&nbsp;&nbsp;:
-            <span class="col1-value-bold">1 ${assetLabel} ≥ $${formatLockPrice(
-    thresholdFloat
-  )}</span>
-          </div>
-          <div class="col1-line">
-            current&nbsp;:
-            <span class="col1-value-bold">$${formatLockPrice(
-              currentPriceFloat
-            )}</span>
-          </div>
-          <div class="col1-line">
-            time unlock:
-            <span class="col1-value-bold">${formatTimestamp(
-              lock.unlockTime
-            )}</span>
-          </div>
-          <div class="col1-line">
-            locked&nbsp;&nbsp;:
-            <span class="col1-value-bold">${balanceFloat.toFixed(
-              4
-            )} ${assetLabel}</span>
-          </div>
-        </div>
-
-        <div class="vault-col-buttons">
-          ${
-            !withdrawnTag
-              ? `<button data-role="withdraw" onclick="withdrawVault('${addrFull}')" ${
-                  canWithdraw ? "" : "disabled"
-                }>Withdraw</button>`
-              : ``
-          }
-
-          ${
-            showRescue
-              ? `<button data-role="rescue" onclick="rescueVault('${addrFull}')"
-                  style="background:#1d4ed8;color:white;">Rescue</button>`
-              : `<button data-role="rescue" style="display:none;background:#1d4ed8;color:white;"
-                  onclick="rescueVault('${addrFull}')">Rescue</button>`
-          }
-
-          <button data-role="remove" onclick="removeVault('${addrFull}')"
-                  style="background:#b91c1c;">
-            Remove
-          </button>
-        </div>
-
-        <div class="vault-col-pie">
-          <div class="small" style="text-align:center;">Price goal</div>
-          <div class="pie-wrapper">
-            <div class="price-goal-pie"
-                 style="background:conic-gradient(#22c55e ${thresholdPct}%, #020617 ${thresholdPct}%);">
-            </div>
-            <div class="pie-tooltip">${thresholdPct.toFixed(2)}%</div>
-          </div>
-        </div>
-
-        <div class="vault-col-time">
-          <div class="small">Time progress</div>
-          <div class="time-progress-bar-bg">
-            <div class="time-progress-bar-fill" style="${timeBarStyle}"></div>
-          </div>
-          <div class="small">${timeLabel}</div>
-        </div>
-
-        <div class="vault-col-feeds">
-          <div>
-            <div><b>1°</b> : $${formatLockPrice(
-              primaryPriceFloat
-            )}, $reserves ≈ ${formatReserveK(primaryResFloat)}</div>
-            <div><b>2°</b> : $${formatLockPrice(
-              backupPriceFloat
-            )}, $reserves ≈ ${formatReserveK(backupResFloat)}</div>
-            <div>${effectiveLine}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-// Render *all* vaults (used only once on initial load or after reorder)
-function renderLocks() {
-  if (!locks.length) {
-    locksContainer.textContent = "No locks found.";
-    return;
-  }
-
-  const html = locks.map((l) => renderSingleVault(l)).join("");
-  locksContainer.innerHTML = html;
-
-  attachPieHandlers();
-}
-
-// Attach hover tooltips to pies
-function attachPieHandlers() {
-  const cards = locksContainer.querySelectorAll(".vault-card");
-  cards.forEach((card) => {
-    const pieWrapper = card.querySelector(".pie-wrapper");
-    const tooltip = card.querySelector(".pie-tooltip");
-    if (pieWrapper && tooltip) {
-      pieWrapper.addEventListener("mouseenter", () => {
-        tooltip.style.opacity = "1";
-      });
-      pieWrapper.addEventListener("mouseleave", () => {
-        tooltip.style.opacity = "0";
-      });
-    }
-  });
-}
-
-// -------------------------------
-// TIME REFRESH (1s)
-// -------------------------------
-function startTimeRefresh() {
-  setInterval(() => {
-    if (!locks.length) return;
-    const nowTs = Math.floor(Date.now() / 1000);
-
-    for (const lock of locks) {
-      if (!lock.startTime || !lock.unlockTime) continue;
-      const total = lock.unlockTime - lock.startTime;
-      if (total <= 0) continue;
-
-      const done = Math.min(nowTs, lock.unlockTime) - lock.startTime;
-      const pct = Math.max(0, Math.min(100, (done / total) * 100));
-      const secsLeft = Math.max(0, lock.unlockTime - nowTs);
-
-      const card = document.querySelector(
-        `.vault-card[data-addr="${lock.address}"]`
-      );
-      if (!card) continue;
-
-      const barFill = card.querySelector(".time-progress-bar-fill");
-      const labelEl = card.querySelector(".vault-col-time .small:last-child");
-
-      if (barFill) barFill.style.width = `${pct.toFixed(1)}%`;
-      if (labelEl) labelEl.textContent = formatCountdownNumber(secsLeft) + " remaining";
-    }
-  }, 1000);
-}
-
-// -------------------------------
-// NO-FLASH PRICE/BALANCE/RESCUE UPDATE (5s)
-// -------------------------------
-async function updateVaultPrices() {
-  if (!locks.length) return;
-
-  for (const lock of locks) {
-    const addr = lock.address;
-    const card = document.querySelector(`.vault-card[data-addr="${addr}"]`);
-    if (!card) continue;
-
-    // 1) Price + feed update
-    let detail;
-    try {
-      const vault = new ethersLib.Contract(addr, vaultAbi, provider);
-      detail = await vault.priceDetail();
-    } catch {
-      continue;
-    }
-
-    const chosenPriceBN = detail[0];
-    const primaryOK = detail[1];
-    const primaryPxBN = detail[2];
-    const primaryResBN = detail[3];
-    const backupOK = detail[4];
-    const backupPxBN = detail[5];
-    const backupResBN = detail[6];
-    const usedPrimary = detail[7];
-    const usedBackup = detail[8];
-
-    const priceFloat = Number(ethersLib.utils.formatUnits(chosenPriceBN, 18));
-
-    const priceSpan = card.querySelector(
-      ".vault-col-main .col1-line:nth-child(2) span.col1-value-bold"
-    );
-    if (priceSpan) priceSpan.textContent = `$${formatLockPrice(priceFloat)}`;
-
-    const thresholdFloat = parseFloat(
-      ethersLib.utils.formatUnits(lock.threshold, 18)
-    );
-    const pct = thresholdFloat
-      ? Math.min(100, Math.max(0, (priceFloat / thresholdFloat) * 100))
-      : 0;
-
-    const pie = card.querySelector(".price-goal-pie");
-    if (pie) {
-      pie.style.background = `conic-gradient(#22c55e ${pct}%, #020617 ${pct}%)`;
-    }
-    const tooltip = card.querySelector(".pie-tooltip");
-    if (tooltip) tooltip.textContent = `${pct.toFixed(2)}%`;
-
-    const pResFloat = quoteResToUsdFloat(
-      primaryResBN,
-      lock.primaryQuoteDecimals
-    );
-    const bResFloat = quoteResToUsdFloat(
-      backupResBN,
-      lock.backupQuoteDecimals
-    );
-
-    const feedsInner = card.querySelector(".vault-col-feeds > div");
-    if (feedsInner) {
-      let html = "";
-      if (primaryOK) {
-        html += `<b>1°</b> : $${formatLockPrice(
-          Number(ethersLib.utils.formatUnits(primaryPxBN, 18))
-        )}, $reserves ≈ ${formatReserveK(pResFloat)}<br>`;
-      }
-      if (backupOK) {
-        html += `<b>2°</b> : $${formatLockPrice(
-          Number(ethersLib.utils.formatUnits(backupPxBN, 18))
-        )}, $reserves ≈ ${formatReserveK(bResFloat)}<br>`;
-      }
-      if (usedPrimary) {
-        html += `Effective: price=$${formatLockPrice(
-          priceFloat
-        )} via 𝟏° feed`;
-      } else if (usedBackup) {
-        html += `Effective: price=$${formatLockPrice(
-          priceFloat
-        )} via 𝟐° feed`;
-      } else {
-        html += `Effective: feeds unavailable — using time unlock only`;
-      }
-      feedsInner.innerHTML = html;
-    }
-
-    // 2) Live balance update (triggers instant Rescue-button)
-    try {
-      let newBalanceBN;
-      if (lock.isNative) {
-        newBalanceBN = await provider.getBalance(addr);
-      } else {
-        const erc20 = new ethersLib.Contract(lock.lockToken, erc20Abi, provider);
-        newBalanceBN = await erc20.balanceOf(addr);
-      }
-
-      lock.balanceBN = newBalanceBN;
-      const hasBalance = !newBalanceBN.isZero();
-
-      const dec = lock.assetLabel === "HEX" ? 8 : 18;
-      const newBalanceFloat = parseFloat(
-        ethersLib.utils.formatUnits(newBalanceBN, dec)
-      );
-
-      const balanceSpan = card.querySelector(
-        ".vault-col-main .col1-line:nth-child(4) span.col1-value-bold"
-      );
-      if (balanceSpan) {
-        balanceSpan.textContent = `${newBalanceFloat.toFixed(
-          4
-        )} ${lock.assetLabel}`;
-      }
-
-      // Update RESCUE, WITHDRAW, and status tag
-      const withdrawnTag = lock.withdrawn;
-      const viaTime = lock.unlockTime <= Math.floor(Date.now() / 1000);
-      const viaPrice =
-        thresholdFloat > 0 && priceFloat >= thresholdFloat && lock.priceValid;
-
-      const canWithdraw = !withdrawnTag && (viaTime || viaPrice);
-      lock.canWithdraw = canWithdraw;
-
-      const statusTag = card.querySelector(".tag");
-      if (statusTag) {
-        if (withdrawnTag) {
-          statusTag.className = "tag status-warn";
-          statusTag.textContent = "✖ WITHDRAWN ✖";
-          card.classList.remove("vault-unlockable");
-        } else if (canWithdraw) {
-          statusTag.className = "tag status-ok";
-          statusTag.textContent = "✔ UNLOCKABLE ✔";
-          card.classList.add("vault-unlockable");
-        } else {
-          statusTag.className = "tag status-bad";
-          statusTag.textContent = "🔒 LOCKED 🔒";
-          card.classList.remove("vault-unlockable");
-        }
-      }
-
-      const btnCol = card.querySelector(".vault-col-buttons");
-      if (btnCol) {
-        const withdrawBtn = btnCol.querySelector('button[data-role="withdraw"]');
-        const rescueBtn = btnCol.querySelector('button[data-role="rescue"]');
-
-        if (withdrawBtn) {
-          withdrawBtn.disabled = !canWithdraw;
-          withdrawBtn.style.display = withdrawnTag ? "none" : "inline-block";
-        }
-
-        if (rescueBtn) {
-          const showRescue = withdrawnTag && hasBalance;
-          rescueBtn.style.display = showRescue ? "inline-block" : "none";
-        }
-      }
-    } catch (err) {
-      console.error("Balance refresh error:", err);
-    }
-  }
-}
-
-// -------------------------------
 // Collapse / Expand
 // -------------------------------
 function minimizeVault(addr) {
   setCollapsed(addr, true);
   const card = document.querySelector(`.vault-card[data-addr="${addr}"]`);
-  if (card
+  if (card) card.classList.add("collapsed");
+}
+
+function maximizeVault(addr) {
+  setCollapsed(addr, false);
+  const card = document.querySelector(`.vault-card[data-addr="${addr}"]`);
+  if (card) card.classList.remove("collapsed");
+}
+
+// -------------------------------
+// WITHDRAW (no flash)
+// -------------------------------
+async function withdrawVault(addr) {
+  try {
+    if (!signer) {
+      alert("Connect wallet first.");
+      return;
+    }
+
+    const vault = new ethersLib.Contract(addr, vaultAbi, signer);
+    const tx = await vault.withdraw();
+    await tx.wait();
+
+    // NO FULL RELOAD — update ONLY this card
+    await refreshSingleVault(addr);
+
+  } catch (err) {
+    alert("Withdraw failed: " + (err?.message || err));
+    console.error("Withdraw error:", err);
+  }
+}
+
+// -------------------------------
+// RESCUE (no flash)
+// -------------------------------
+async function rescueVault(addr) {
+  try {
+    if (!signer) {
+      alert("Connect wallet first.");
+      return;
+    }
+
+    const lower = addr.toLowerCase();
+    const vault = new ethersLib.Contract(addr, vaultAbi, signer);
+
+    const lock = locks.find(l => l.address === lower);
+    if (!lock) {
+      alert("Vault not found in memory.");
+      return;
+    }
+
+    let tx;
+    if (lock.isNative) {
+      tx = await vault.rescueNative();
+    } else {
+      tx = await vault.rescue(lock.lockToken);
+    }
+
+    await tx.wait();
+
+    // NO FULL RELOAD — update only this one
+    await refreshSingleVault(addr);
+
+  } catch (err) {
+    alert("Rescue failed: " + (err?.message || err));
+    console.error("Rescue error:", err);
+  }
+}
+
+// -------------------------------
+// REMOVE (no flash, no reload)
+// -------------------------------
+function removeVault(addr) {
+  const lower = addr.toLowerCase();
+
+  const list = getLocalVaults().filter(a => a !== lower);
+  setLocalVaultList(list);
+
+  const card = document.querySelector(`.vault-card[data-addr="${lower}"]`);
+  if (card) {
+    card.style.opacity = "0";
+    setTimeout(() => card.remove(), 150);
+  }
+
+  // Do NOT reload everything — keep all other cards untouched
+}
+
+// -------------------------------
+// COPY ADDRESS WITH POPUP
+// -------------------------------
+function copyAddr(addr, ev) {
+  navigator.clipboard.writeText(addr)
+    .then(() => {
+      const btn = ev.target.closest(".copy-icon-btn");
+      if (!btn) return;
+
+      const popup = document.createElement("div");
+      popup.className = "copy-popup";
+      popup.textContent = "Copied";
+      btn.appendChild(popup);
+
+      setTimeout(() => popup.remove(), 900);
+    })
+    .catch(err => console.error("Copy failed:", err));
+}
+
+// -------------------------------
+// ADD VAULT MANUALLY (NO FLASH)
+// -------------------------------
+addVaultBtn.addEventListener("click", async () => {
+  if (!provider) {
+    manualAddStatus.textContent = "Connect wallet first.";
+    return;
+  }
+
+  const addr = manualVaultInput.value.trim();
+  if (!addr || !addr.startsWith("0x") || addr.length !== 42) {
+    manualAddStatus.textContent = "Invalid address.";
+    return;
+  }
+
+  const lower = addr.toLowerCase();
+  saveLocalVaultAddress(lower);
+
+  manualAddStatus.textContent = "Vault added.";
+  manualVaultInput.value = "";
+
+  // ✨ NO FLASH — only soft-load this vault
+  await softLoadSingleVault(lower);
+});
+
+// "Restore All Vaults" button
+document.getElementById("restoreVaultsBtn")
+  .addEventListener("click", restoreAllVaults);
+
+// -------------------------------
+// Utilities
+// -------------------------------
+function formatTimestamp(ts) {
+  return new Date(ts * 1000).toLocaleString();
+}
+
+function formatCountdownNumber(diff) {
+  if (diff <= 0) return "0s";
+
+  let d = Math.floor(diff / 86400);
+  diff %= 86400;
+  let h = Math.floor(diff / 3600);
+  diff %= 3600;
+  let m = Math.floor(diff / 60);
+  let s = diff % 60;
+
+  const parts = [];
+  if (d) parts.push(d + "d");
+  if (h) parts.push(h + "h");
+  if (m) parts.push(m + "m");
+  if (!d && !h && !m) parts.push(s + "s");
+  return parts.join(" ");
+}
