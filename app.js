@@ -1176,30 +1176,26 @@ function renderSingleVault(lock) {
       <div class="vault-body">
         <div class="vault-col-main">
           <div class="col1-line">
-            target&nbsp;&nbsp;:
-            <span class="col1-value-bold">1 ${assetLabel} ≥ $${formatLockPrice(
-    thresholdFloat
-  )}</span>
+            target&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
+            &nbsp;<span class="col1-value-bold">1 ${assetLabel} ≥ $${formatLockPrice(thresholdFloat)}</span>
           </div>
+        
           <div class="col1-line">
-            current&nbsp;:
-            <span class="col1-value-bold">$${formatLockPrice(
-              currentPriceFloat
-            )}</span>
+            current&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
+            &nbsp;<span class="col1-value-bold">$${formatLockPrice(currentPriceFloat)}</span>
           </div>
+        
           <div class="col1-line">
-            time unlock:
-            <span class="col1-value-bold">${formatTimestamp(
-              lock.unlockTime
-            )}</span>
+            time&nbsp;unlock&nbsp;&nbsp;:
+            &nbsp;<span class="col1-value-bold">${formatTimestamp(lock.unlockTime)}</span>
           </div>
+        
           <div class="col1-line">
-            locked&nbsp;&nbsp;:
-            <span class="col1-value-bold">${balanceFloat.toFixed(
-              4
-            )} ${assetLabel}</span>
+            locked&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
+            &nbsp;<span class="col1-value-bold">${balanceFloat.toFixed(4)} ${assetLabel}</span>
           </div>
         </div>
+
 
         <div class="vault-col-buttons">
           ${
