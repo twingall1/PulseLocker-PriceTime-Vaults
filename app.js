@@ -488,7 +488,7 @@ async function refreshGlobalPrice() {
 
     let html = "";
 
-    html += `<div class="small"><b>Primary feed:</b> ${cfg.primaryFeedLabel}<br>`;
+    html += `<div class="small"><b>Primary feed(1°):</b> ${cfg.primaryFeedLabel}<br>`;
     if (!primaryInfo.ok) {
       html += `Status: <span class="status-bad">unavailable</span>`;
     } else {
@@ -501,7 +501,7 @@ async function refreshGlobalPrice() {
     }
 
     if (cfg.backupPair) {
-      html += `<div class="small" style="margin-top:8px;"><b>Backup feed:</b> ${cfg.backupFeedLabel}<br>`;
+      html += `<div class="small" style="margin-top:8px;"><b>Backup feed(2°):</b> ${cfg.backupFeedLabel}<br>`;
       if (!backupInfo.ok) {
         html += `Status: <span class="status-bad">unavailable</span>`;
       } else {
