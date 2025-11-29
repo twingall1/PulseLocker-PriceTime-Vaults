@@ -464,13 +464,40 @@
       overflow-x: hidden;
     }
 
+        /* Align logo + title block properly */
+    .header-left {
+      display: flex;
+      align-items: center;       /* vertical alignment */
+      gap: 14px;                 /* spacing between logo and text */
+    }
+    
+    /* Make the logo scale proportionally */
+    .header-logo {
+      height: 64px;              /* adjust until it visually matches the title+subtitle block */
+      width: auto;
+    }
+    
+    /* Increase title size */
+    .header-title-block > div:first-child {
+      font-size: 24px;           /* bigger title */
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    
+    /* Increase subtitle size + clean spacing */
+    .header-title-block .header-subtitle {
+      font-size: 15px;           /* slightly larger subtitle */
+      line-height: 1.25;
+      margin-top: 3px;           /* small vertical spacing */
+    }
+
   </style>
 </head>
 
 <body>
   <header class="header-row">
     <div class="header-left">
-      <img src="PulseChainLogoTransparent.png" alt="PLS" style="height:38px;width:auto;">
+      <img src="PulseChainLogoTransparent.png" alt="PLS" class="header-logo">
       <div class="header-title-block">
         <div><b>Price + Time Vaults (PLS / pDAI / HEX)</b></div>
         <div class="header-subtitle small">
