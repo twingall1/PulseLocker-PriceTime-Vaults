@@ -1176,7 +1176,7 @@ function renderSingleVault(lock) {
       <div class="vault-body">
         <div class="vault-col-main">
           <div class="col1-line">
-            target&nbsp;&nbsp;💲:
+            target&nbsp;&nbsp;&nbsp;💲:
             &nbsp;<span class="col1-value-bold">1 ${assetLabel} ≥ $${formatLockPrice(thresholdFloat)}</span>
           </div>
         
@@ -1186,7 +1186,7 @@ function renderSingleVault(lock) {
           </div>
         
           <div class="col1-line">
-            time&nbsp;&nbsp;&nbsp;🔓:
+            time&nbsp;&nbsp;&nbsp;&nbsp;🔓:
             &nbsp;<span class="col1-value-bold">${formatTimestamp(lock.unlockTime)}</span>
           </div>
         
