@@ -543,6 +543,43 @@
   white-space: normal;
   overflow: hidden;
 }
+/* ----------------------------------------------------------
+   MOBILE FIX #1 — Shrink top 3 cards so they never overflow
+   ---------------------------------------------------------- */
+@media (max-width: 700px) {
+
+  /* Make the 3-column dashboard become a single column */
+  .three-col-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Reduce card padding on mobile so they fit better */
+  .three-col-grid .card {
+    padding: 10px 12px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  /* Provide small side padding so cards don't touch screen edges */
+  .col-1, .col-2, .col-3 {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  /* Prevent headings from pushing the card wider */
+  .three-col-grid h2 {
+    font-size: 16px !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Prevent form-row labels from forcing overflow */
+  .form-row-h label {
+    min-width: 90px !important;
+    font-size: 13px !important;
+  }
+
+  /
 
   </style>
 </head>
