@@ -827,6 +827,17 @@
             max-width: none !important;
             flex: 0 0 auto !important;        /* behave like original inline flex children */
         }
+              /* This selector is intentionally strong to beat inline styles */
+        .vault-card .vault-header-bottomrow input[type="text"],
+        .vault-card .vault-header input[type="text"] {
+            width: 360px !important;
+            max-width: 360px !important;
+            min-width: 360px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            overflow-wrap: normal !important;
+        }
     }
 
 
