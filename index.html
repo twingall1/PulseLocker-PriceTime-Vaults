@@ -517,22 +517,30 @@
       text-decoration: none;
     }
     /* ============================================================
-       MOBILE IMPROVEMENTS FOR VAULT CARDS & NON-VAULT ZOOM
+       MOBILE IMPROVEMENTS FOR VAULT CARDS & CARD-SCALING
        ============================================================ */
     
     @media (max-width: 700px) {
     
       /* ------------------------------------------------------------
-         0. GLOBAL ZOOM FOR NON-VAULT CARDS ONLY (5–7%)
+         0. ZOOM OUT ONLY FOR THE THREE NON-VAULT CARDS
          ------------------------------------------------------------ */
     
-      /* We wrap non-vault cards using their existing container.
-         Vault cards are .vault-card, so this excludes them. */
+      /* The three cards live in this order inside .page-inner */
+      /* 1: Create new lock  (has #createVaultCard or similar wrapper)
+         2: About this app    (#aboutCard)
+         3: Global price feed (#priceFeedCard)
+         We scale only these three blocks.
+      */
     
-      .page-inner > div:not(#yourLocksSection) {
-          transform: scale(0.93);
+      #createVaultSection,
+      #aboutSection,
+      #priceFeedSection {
+          transform: scale(0.90);
           transform-origin: top center;
+          width: 111%;   /* counteracts shrink so centering behaves */
       }
+    
     
       /* Prevent horizontal scrollbar from zoom scaling */
       html, body {
@@ -550,36 +558,53 @@
           gap: 14px;
       }
     
-    
       /* ------------------------------------------------------------
-         1. HEADER — address 40%, buttons on right
+         1. HEADER — two-row design
          ------------------------------------------------------------ */
     
+      /* First row: icon + title + status only */
       .vault-header {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+      }
+    
+      .vault-header-toprow {
           display: flex;
           flex-direction: row;
           align-items: center;
-          flex-wrap: nowrap;
-          justify-content: space-between;
-          gap: 6px;
+          justify-content: flex-start;
+          gap: 10px;
+          width: 100%;
       }
     
-      /* shrink the address field */
-      .vault-header input[type="text"] {
+      /* Second row: address left, icons right */
+      .vault-header-bottomrow {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          gap: 10px;
+      }
+    
+      /* shrink the address field to 40% */
+      .vault-header-bottomrow input[type="text"] {
           width: 40% !important;
           max-width: 40% !important;
           box-sizing: border-box;
           font-size: 13px;
           padding: 6px;
-          white-space: normal;     /* allow wrapping */
-          overflow-wrap: anywhere; /* break long address */
+          white-space: normal;
+          overflow-wrap: anywhere;
       }
     
-      /* row of icons on the right */
-      .vault-header .copy-btn,
-      .vault-header .min-btn,
-      .vault-header .sort-btn {
-          margin-left: 6px;
+      /* icons on right side */
+      .vault-header-icons {
+          display: flex;
+          flex-direction: row;
+          gap: 8px;
           flex-shrink: 0;
       }
     
@@ -594,7 +619,6 @@
           gap: 18px;
       }
     
-      /* main info full width */
       .vault-col-main {
           width: 100% !important;
       }
@@ -624,7 +648,6 @@
          4. PIE CHART + TIME BAR SIDE-BY-SIDE
          ------------------------------------------------------------ */
     
-      /* Wrap pie + time bar into a 2-column layout */
       .vault-mobile-row {
           display: flex;
           flex-direction: row;
@@ -634,7 +657,6 @@
           gap: 14px;
       }
     
-      /* Left: pie */
       .vault-col-pie {
           width: 50% !important;
           display: flex;
@@ -643,12 +665,10 @@
           text-align: center;
       }
     
-      /* Ensure title 'Price goal' is preserved & centered */
       .vault-col-pie > .col-title {
           margin-bottom: 6px;
       }
     
-      /* Right: time bar */
       .vault-col-time {
           width: 50% !important;
           display: flex;
@@ -657,12 +677,10 @@
           text-align: center;
       }
     
-      /* Title 'Time progress' respected */
       .vault-col-time > .col-title {
           margin-bottom: 6px;
       }
     
-      /* make the time progress bar full width inside its half */
       .time-progress-bar-container {
           width: 100%;
       }
@@ -676,6 +694,7 @@
           width: 100% !important;
       }
     }
+
 
   </style>
 </head>
