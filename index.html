@@ -579,7 +579,79 @@
     font-size: 13px !important;
   }
 
-  /
+  /* Make the input/select widths flexible */
+  .form-row-h input,
+  .form-row-h select {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+/* ----------------------------------------------------------
+   MOBILE FIX — Shrink Header (Logo + Titles + Buttons)
+   Prevent global overflow on small screens
+   ---------------------------------------------------------- */
+@media (max-width: 700px) {
+
+  /* Stack header vertically so content fits */
+  .header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  /* Row containing logo + text */
+  .header-left {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  /* Slightly smaller logo */
+  .header-logo {
+    height: 48px !important;
+  }
+
+  /* Smaller title */
+  .header-title-block > div:first-child {
+    font-size: 18px !important;
+  }
+
+  /* Smaller subtitle */
+  .header-subtitle {
+    font-size: 13px !important;
+  }
+
+  /* Center tabs nicely */
+  .header-tabs {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 14px;
+  }
+
+  /* Wallet-and-buttons block should wrap instead of forcing overflow */
+  .header-right {
+    width: 100%;
+  }
+
+  .wallet-top-row {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* Shrink connect/disconnect and theme toggle */
+  #connectBtn,
+  #themeToggle {
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+  }
+
+  /* Shrink disconnect icon */
+  .disconnect-icon {
+    width: 24px !important;
+    height: 24px !important;
+  }
+}
 
   </style>
 </head>
