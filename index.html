@@ -801,6 +801,33 @@
       }
       }
     }
+    /* ============================================================
+       DESKTOP RESTORATION (ONLY >700px)
+       ============================================================ */
+    @media (min-width: 701px) {
+    
+        /* 1. Restore original desktop address box */
+        .vault-header input[type="text"] {
+            width: 360px !important;
+            max-width: 360px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+    
+        /* 2. Restore original desktop layout: remove mobile wrapper behaviour */
+        .vault-mobile-row {
+            display: contents !important;  /* removes wrapper without affecting DOM */
+        }
+    
+        /* 3. Restore original pie + time layout */
+        .vault-col-pie,
+        .vault-col-time {
+            width: auto !important;          /* no forced stretching */
+            max-width: none !important;
+            flex: 0 0 auto !important;        /* behave like original inline flex children */
+        }
+    }
 
 
 
