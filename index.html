@@ -632,6 +632,24 @@
   }
 
 }
+/* ============================================================
+   DESKTOP-ONLY FIX — restore pie left + bar right
+   ============================================================ */
+@media (min-width: 701px) {
+
+  /* vault-body already inline-flex, this ensures children don't wrap */
+  .vault-body {
+    flex-wrap: nowrap !important;
+  }
+
+  /* pie + time MUST NOT take full width on desktop */
+  .vault-col-pie,
+  .vault-col-time {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+}
 
     
   </style>
