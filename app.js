@@ -1238,25 +1238,25 @@ function renderSingleVault(lock) {
             Remove
           </button>
         </div>
-
-        <div class="vault-col-pie">
-          <div class="small" style="text-align:center;">Price goal</div>
-          <div class="pie-wrapper">
-            <div class="price-goal-pie"
-                 style="background:conic-gradient(#22c55e ${thresholdPct}%, #020617 ${thresholdPct}%);">
+        <div class="vault-mobile-row">
+          <div class="vault-col-pie">
+            <div class="small" style="text-align:center;">Price goal</div>
+            <div class="pie-wrapper">
+              <div class="price-goal-pie"
+                   style="background:conic-gradient(#22c55e ${thresholdPct}%, #020617 ${thresholdPct}%);">
+              </div>
+              <div class="pie-tooltip">${thresholdPct.toFixed(2)}%</div>
             </div>
-            <div class="pie-tooltip">${thresholdPct.toFixed(2)}%</div>
+          </div>
+  
+          <div class="vault-col-time">
+            <div class="small">Time progress</div>
+            <div class="time-progress-bar-bg">
+              <div class="time-progress-bar-fill" style="${timeBarStyle}"></div>
+            </div>
+            <div class="small">${timeLabel}</div>
           </div>
         </div>
-
-        <div class="vault-col-time">
-          <div class="small">Time progress</div>
-          <div class="time-progress-bar-bg">
-            <div class="time-progress-bar-fill" style="${timeBarStyle}"></div>
-          </div>
-          <div class="small">${timeLabel}</div>
-        </div>
-
         <div class="vault-col-feeds">
           <div>
             <div><b>1°</b> : $${formatLockPrice(
