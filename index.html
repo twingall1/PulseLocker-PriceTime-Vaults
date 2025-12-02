@@ -839,6 +839,22 @@
             overflow-wrap: normal !important;
         }
     }
+        /* ============================================================
+       FINAL MOBILE-ONLY ZOOM FIX FOR ONLY THE FIRST 3 NON-VAULT CARDS
+       (Does NOT affect vault cards, does NOT affect desktop)
+       ============================================================ */
+    @media (max-width: 700px) {
+    
+        /* Shrink the first 3 .card elements on the page */
+        .page-inner > .card:nth-of-type(1),
+        .page-inner > .card:nth-of-type(2),
+        .page-inner > .card:nth-of-type(3) {
+            transform: scale(0.92);          /* 8% shrink */
+            transform-origin: top center;
+            width: 108%;                     /* compensates shrink */
+        }
+    
+    }
 
 
 
