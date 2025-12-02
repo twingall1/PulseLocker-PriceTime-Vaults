@@ -490,35 +490,34 @@
       line-height: 1.25;
       margin-top: 3px;           /* small vertical spacing */
     }
-
-    .mini-tabs {
-      width: 100%;
+    .header-tabs {
       display: flex;
+      align-items: center;
       justify-content: center;
-      gap: 28px;
-      margin-top: 6px;   /* Tiny spacing */
-      margin-bottom: 6px;
+      gap: 20px;
+      flex: 1;
     }
-  
-    .mini-tab {
-      font-size: 15px;
+    
+    .header-tab {
+      font-size: 16px;
       font-weight: 600;
       color: #9ca3af;
       text-decoration: none;
-      padding: 3px 6px; /* very small footprint */
+      padding: 4px 10px;
       border-radius: 6px;
       transition: 0.15s ease;
     }
-  
-    .mini-tab:hover {
-      color: #60a5fa; /* soft blue */
+    
+    .header-tab:hover {
+      color: #60a5fa;
     }
-  
-    .active-mini-tab {
-      color: #ffffff;
+    
+    .active-header-tab {
+      color: white;
       background: #1e3a8a;
       border: 1px solid #3b82f6;
     }
+
 
 
   </style>
@@ -531,6 +530,7 @@
   </div>
 
   <header class="header-row">
+  
     <div class="header-left">
       <img src="PulseChainLogoTransparent.png" alt="PLS" class="header-logo">
       <div class="header-title-block">
@@ -540,6 +540,13 @@
         </div>
       </div>
     </div>
+  
+    <!-- CENTER TABS -->
+    <div class="header-tabs">
+      <a href="index.html" class="header-tab" id="tab-dashboard">Dashboard</a>
+      <a href="user-guide.html" class="header-tab" id="tab-guide">User Guide</a>
+    </div>
+
 
     <div class="header-right">
       
@@ -684,12 +691,13 @@
   <script src="app.js"></script>
   <script>
     const path = window.location.pathname;
-
+  
     if (path.includes("user-guide")) {
-      document.getElementById("tab-guide").classList.add("active-mini-tab");
+      document.getElementById("tab-guide").classList.add("active-header-tab");
     } else {
-      document.getElementById("tab-dashboard").classList.add("active-mini-tab");
+      document.getElementById("tab-dashboard").classList.add("active-header-tab");
     }
-  </script>  
+  </script>
+
 </body>
 </html>
