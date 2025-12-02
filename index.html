@@ -619,7 +619,19 @@
   }
 
 }
+@media (max-width: 700px) {
 
+  /* MOBILE: shrink entire column content so cards fit naturally */
+
+  .three-col-grid .col-1,
+  .three-col-grid .col-2,
+  .three-col-grid .col-3 {
+      transform: scale(0.92);
+      transform-origin: top center;
+      width: 108%;   /* counteracts the shrink so it centers properly */
+  }
+
+}
 
     
   </style>
