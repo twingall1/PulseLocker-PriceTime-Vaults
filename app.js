@@ -1137,60 +1137,76 @@ function renderSingleVault(lock) {
 
   return `
     <div class="card vault-card ${collapsedCls}" data-addr="${addrFull}">
+
       <div class="vault-header">
-        <span class="vault-asset-label label-${assetLabel}">
-          ${
-            TOKEN_ICONS[assetLabel]
-              ? `<img src="${TOKEN_ICONS[assetLabel]}" class="token-mini">`
-              : ""
-          }
-          ${assetLabel} VAULT
-        </span>
 
-        ${status}
+        <!-- ROW 1: logo + vault name + status -->
+        <div class="vault-header-toprow">
+          <span class="vault-asset-label label-${assetLabel}">
+            ${
+              TOKEN_ICONS[assetLabel]
+                ? `<img src="${TOKEN_ICONS[assetLabel]}" class="token-mini">`
+                : ""
+            }
+            ${assetLabel} VAULT
+          </span>
 
-        <input class="mono"
-               value="${addrFull}"
-               readonly
-               style="
-                 background:var(--input-bg);
-                 color:#a5b4fc;
-                 border:1px solid var(--input-border);
-                 padding:3px 4px;
-                 border-radius:6px;
-                 width: 360px;
-                 max-width:360px;
-                 overflow:hidden;
-                 text-overflow:ellipsis;
-                 white-space:nowrap;
-               " />
-
-        <div class="copy-icon-btn" onclick="copyAddr('${addrFull}', event)">
-          <svg viewBox="0 0 24 24">
-            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-          </svg>
+          ${status}
         </div>
 
-        <button class="minmax-btn"
-                onclick="toggleVault('${addrFull}')">
-          ${isCollapsed(addrFull) ? "▼ Max" : "▲ Min"}
-        </button>
+        <!-- ROW 2: address + copy + min/max + reorder -->
+        <div class="vault-header-bottomrow">
 
+          <input class="mono"
+                 value="${addrFull}"
+                 readonly
+                 style="
+                   background:var(--input-bg);
+                   color:#a5b4fc;
+                   border:1px solid var(--input-border);
+                   padding:3px 4px;
+                   border-radius:6px;
+                   width: 40%;
+                   max-width:40%;
+                   overflow:hidden;
+                   text-overflow:ellipsis;
+                   white-space:normal;
+                   overflow-wrap:anywhere;
+                 " />
 
-        <div class="reorder-buttons">
-          ${
-            locks.findIndex((l) => l.address === addrFull) > 0
-              ? `<div class="reorder-up" onclick="moveVaultUp('${addrFull}')">▲</div>`
-              : ``
-          }
-          ${
-            locks.findIndex((l) => l.address === addrFull) <
-            locks.length - 1
-              ? `<div class="reorder-down" onclick="moveVaultDown('${addrFull}')">▼</div>`
-              : ``
-          }
-        </div>
-      </div>
+          <div class="vault-header-icons">
+
+            <div class="copy-icon-btn" onclick="copyAddr('${addrFull}', event)">
+              <svg viewBox="0 0 24 24">
+                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+              </svg>
+            </div>
+
+            <button class="minmax-btn"
+                    onclick="toggleVault('${addrFull}')">
+              ${isCollapsed(addrFull) ? "▼ Max" : "▲ Min"}
+            </button>
+
+            <div class="reorder-buttons">
+              ${
+                locks.findIndex((l) => l.address === addrFull) > 0
+                  ? `<div class="reorder-up" onclick="moveVaultUp('${addrFull}')">▲</div>`
+                  : ``
+              }
+              ${
+                locks.findIndex((l) => l.address === addrFull) <
+                locks.length - 1
+                  ? `<div class="reorder-down" onclick="moveVaultDown('${addrFull}')">▼</div>`
+                  : ``
+              }
+            </div>
+
+          </div><!-- vault-header-icons -->
+
+        </div><!-- vault-header-bottomrow -->
+
+      </div><!-- vault-header -->
+
 
       <div class="vault-body">
         <div class="vault-col-main">
