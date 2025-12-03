@@ -917,6 +917,96 @@
     order: 99;   /* VERY HIGH = guaranteed last */
   }
 }
+@media (max-width: 700px) {
+
+  /* Flatten grid into one column */
+  #view-dashboard {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px;
+  }
+
+  .three-col-grid {
+    display: contents; /* allow children to break out */
+  }
+
+  /* The key: break col-1 into separate children on mobile */
+  .col-1 { display: contents; }
+
+  /* Now each card becomes its own flex item: target them directly */
+
+  /* 1. Create New Lock */
+  .col-1 .card:nth-of-type(1) {
+    order: 1;
+  }
+
+  /* 2. Your Locks */
+  #locksContainerCard {
+    order: 2;
+  }
+
+  /* 3. About This App */
+  .col-3 {
+    order: 3;
+  }
+
+  /* 4. Global Price Feed */
+  .col-2 {
+    order: 4;
+  }
+
+  /* 5. Add Vault Address Manually — always last */
+  .col-1 .card:nth-of-type(2) {
+    order: 99;
+  }
+}
+@media (max-width: 700px) {
+
+  /* Reorder vault-body children on mobile */
+  .vault-body {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  /* Row 1 stays: vault-col-main */
+
+  /* Row 2 becomes pie + time + feeds (side by side) */
+  .vault-col-pie,
+  .vault-col-time,
+  .vault-col-feeds {
+    order: 2;
+    flex: 1 1 33%;
+    max-width: 33%;
+  }
+
+  .vault-col-feeds {
+    white-space: normal;
+    font-size: 11px;
+  }
+
+  .vault-mobile-row {
+    display: none !important; /* we no longer use the mobile-row wrapper */
+  }
+
+  /* Convert the three columns (pie/time/feeds) into a row */
+  .vault-body {
+    flex-wrap: wrap;
+  }
+  
+  /* Row 3 (buttons) pushed to the bottom */
+  .vault-col-buttons {
+    order: 3;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 8px;
+  }
+
+  .vault-col-buttons button,
+  .vault-col-buttons .view-only-label {
+    flex: 1 1 48%;
+  }
+}
 
 
 
