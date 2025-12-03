@@ -225,7 +225,12 @@
       grid-template-columns: 1fr 1fr 1fr;
       gap: 16px;
     }
+    
+    /* Swap Global Price Feed (col-2) with About This App (col-3) */
+    .col-2 { order: 3; }   /* Global Price Feed moves to right */
+    .col-3 { order: 2; }   /* About This App moves to center */
 
+    
     @media (max-width: 1100px) {
       .three-col-grid {
         grid-template-columns: 1fr;
@@ -908,7 +913,7 @@
       <!-- COLUMN 2 -->
       <div class="col-2">
         <div class="card">
-          <h2>Global Price Feed</h2>
+          <h2>Global Price Feed <span id="gpfAsset"></span></h2>
           <div class="small" style="margin-bottom:6px;">
             Source: PulseX pools for the selected asset.<br>
             Uses primary (<b>1°</b>) & backup (<b>2°</b>) feeds.<br>
