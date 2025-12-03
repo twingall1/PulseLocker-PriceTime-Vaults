@@ -1175,36 +1175,27 @@
       }
     });
   </script>
- <script>
+<script>
   function fixMobileDashboardOrder() {
-    // Only apply on small screens (mobile)
     if (window.innerWidth > 700) return;
 
-    // 1) Create New Lock  (first card in col-1)
-    const createCard = document.querySelector(".col-1 .card:nth-of-type(1)");
-    // 5) Add Vault Address Manually (second card in col-1)
+    const createCard    = document.querySelector(".col-1 .card:nth-of-type(1)");
     const addManualCard = document.querySelector(".col-1 .card:nth-of-type(2)");
-    // 2) Your Locks  (outside the grid)
-    const locksCard = document.getElementById("locksContainerCard");
-    // 3) About This App  (col-3)
-    const aboutCol = document.querySelector(".col-3");
-    // 4) Global Price Feed (col-2)
-    const feedCol = document.querySelector(".col-2");
+    const locksCard     = document.getElementById("locksContainerCard");
+    const aboutCol      = document.querySelector(".col-3");
+    const feedCol       = document.querySelector(".col-2");
 
-    if (createCard)   createCard.style.order = 1;
-    if (locksCard)    locksCard.style.order   = 2;
-    if (aboutCol)     aboutCol.style.order    = 3;
-    if (feedCol)      feedCol.style.order     = 4;
+    if (createCard)    createCard.style.order = 1;
+    if (locksCard)     locksCard.style.order   = 2;
+    if (aboutCol)      aboutCol.style.order    = 3;
+    if (feedCol)       feedCol.style.order     = 4;
     if (addManualCard) addManualCard.style.order = 5;
   }
 
-  // Run once when the page loads
   document.addEventListener("DOMContentLoaded", fixMobileDashboardOrder);
-  // And again if the user rotates / resizes
   window.addEventListener("resize", fixMobileDashboardOrder);
 </script>
-</body>
-</html>
 
 </body>
 </html>
+
