@@ -867,6 +867,12 @@
     order: 99;
   }
 }
+@media (max-width: 700px) {
+  /* Let dashboard cards be direct flex children (required for ordering script) */
+  .three-col-grid {
+    display: contents !important;
+  }
+}
 
   </style>
 </head>
