@@ -693,6 +693,117 @@
     font-size: 13px !important;
   }
 }
+@media (max-width: 700px) {
+
+  /* Pull content closer to the edges on phones */
+  body {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  /* Reduce extra padding around the top 3 cards */
+  .col-1, .col-2, .col-3 {
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+  }
+}
+@media (max-width: 700px) {
+
+  /* --- Vault HEADER layout on mobile --- */
+
+  .vault-header {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    row-gap: 4px;
+  }
+
+  /* Row 1: logo + "PLS VAULT" + status */
+  .vault-header .vault-asset-label,
+  .vault-header .tag {
+    flex: 0 0 auto;
+  }
+
+  /* Row 2: address box ~50% width + icons to the right */
+  .vault-header input.mono {
+    flex: 1 1 55%;
+    max-width: 55% !important;
+    font-size: 11px;
+  }
+
+  .vault-header .copy-icon-btn,
+  .vault-header .minmax-btn,
+  .vault-header .reorder-buttons {
+    flex: 0 0 auto;
+  }
+
+  .reorder-buttons {
+    flex-direction: row;
+    gap: 2px;
+    margin-left: 2px;
+  }
+
+  /* --- Vault BODY column behavior on mobile --- */
+
+  .vault-body {
+    /* keep inline-flex, but make children take full rows */
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .vault-col-main,
+  .vault-col-buttons,
+  .vault-mobile-row,
+  .vault-col-feeds {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  /* Row 3: target/current/time/locked lines – a bit tighter */
+  .vault-col-main .col1-line {
+    font-size: 12px;
+  }
+
+  /* Row 4: Withdraw + Remove side-by-side */
+  .vault-col-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .vault-col-buttons button {
+    flex: 1 1 48%;
+    white-space: nowrap;
+  }
+
+  /* Row 5: PIE + TIME – we already force side-by-side globally;
+     just ensure they fit nicely on small screens */
+  .vault-mobile-row {
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .vault-mobile-row .vault-col-pie,
+  .vault-mobile-row .vault-col-time {
+    flex: 1 1 50%;
+    max-width: 50%;
+  }
+
+  .vault-col-time {
+    text-align: center;
+  }
+
+  /* Row 6: price feed text full width, slightly smaller */
+  .vault-col-feeds {
+    margin-top: 6px;
+  }
+
+  .vault-col-feeds .small,
+  .vault-col-feeds div {
+    font-size: 11px;
+  }
+}
+
 
   </style>
 </head>
