@@ -37,6 +37,20 @@ function formatReserveK(value) {
     return formatLockPrice(value);
   }
 }
+async function safeCall(fn, attempts = 3) {
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn();           // success → return immediately (desktop case)
+    } catch (err) {
+      if (i === attempts - 1) {
+        throw err;                 // last attempt fails → throw
+      }
+      await new Promise(res =>
+        setTimeout(res, 80 * (i + 1))   // backoff only when needed (mobile)
+      );
+    }
+  }
+}
 
 // collapse state helpers
 function isCollapsed(addr) {
@@ -330,10 +344,14 @@ async function connect() {
     renderLocks();
     updateVaultPrices(); // ensure pies/prices fill immediately
 
+    
     // Timers
     startTimeRefresh();
-    setInterval(updateVaultPrices, 5000);
-    setInterval(refreshGlobalPrice, 5000);
+
+    // Desktop stays at 5s; mobile (<700px wide) gets 8s to reduce RPC flakiness.
+    const refreshMs = window.innerWidth < 700 ? 8000 : 5000;
+    setInterval(updateVaultPrices, refreshMs);
+    setInterval(refreshGlobalPrice, refreshMs);
   } catch (err) {
     alert("Connection failed: " + err.message);
     console.error(err);
@@ -592,11 +610,13 @@ async function computePairPriceAndLiquidity(
   if (!pairAddr) return { ok: false };
   try {
     const pair = new ethersLib.Contract(pairAddr, pairAbi, provider);
-    const [r0, r1] = await pair.getReserves();
+
+    // More robust on mobile: retry getReserves/token0/token1 briefly if RPC hiccups
+    const [r0, r1] = await safeCall(() => pair.getReserves());
     if (r0.eq(0) || r1.eq(0)) return { ok: false };
 
-    const token0 = (await pair.token0()).toLowerCase();
-    const token1 = (await pair.token1()).toLowerCase();
+    const token0 = (await safeCall(() => pair.token0())).toLowerCase();
+    const token1 = (await safeCall(() => pair.token1())).toLowerCase();
 
     let lockRes, quoteRes;
     if (token0 === lockToken && token1 === quoteToken) {
@@ -826,35 +846,23 @@ function detectAssetLabel(lockTokenAddr, isNative) {
 async function loadOneVault(addr) {
   try {
     const vault = new ethersLib.Contract(addr, vaultAbi, provider);
-    const [
-      owner,
-      lockToken,
-      isNative,
-      threshold,
-      unlockTime,
-      startTime,
-      withdrawn,
-      primaryQuoteToken,
-      backupQuoteToken,
-      primaryPair,
-      backupPair,
-      primaryLockTokenIsToken0,
-      backupLockTokenIsToken0
-    ] = await Promise.all([
-      vault.owner(),
-      vault.lockToken(),
-      vault.isNative(),
-      vault.priceThreshold(),
-      vault.unlockTime(),
-      vault.startTime(),
-      vault.withdrawn(),
-      vault.primaryQuoteToken(),
-      vault.backupQuoteToken(),
-      vault.primaryPair(),
-      vault.backupPair(),
-      vault.primaryLockTokenIsToken0(),
-      vault.backupLockTokenIsToken0()
-    ]);
+
+    // Sequential + safeCall: more robust on flaky mobile RPC;
+    // only runs when initially loading a vault (not every 5s).
+    const owner                   = await safeCall(() => vault.owner());
+    const lockToken               = await safeCall(() => vault.lockToken());
+    const isNative                = await safeCall(() => vault.isNative());
+    const threshold               = await safeCall(() => vault.priceThreshold());
+    const unlockTime              = await safeCall(() => vault.unlockTime());
+    const startTime               = await safeCall(() => vault.startTime());
+    const withdrawn               = await safeCall(() => vault.withdrawn());
+    const primaryQuoteToken       = await safeCall(() => vault.primaryQuoteToken());
+    const backupQuoteToken        = await safeCall(() => vault.backupQuoteToken());
+    const primaryPair             = await safeCall(() => vault.primaryPair());
+    const backupPair              = await safeCall(() => vault.backupPair());
+    const primaryLockTokenIsToken0 = await safeCall(() => vault.primaryLockTokenIsToken0());
+    const backupLockTokenIsToken0  = await safeCall(() => vault.backupLockTokenIsToken0());
+
 
     const lockTokenLower = lockToken.toLowerCase();
     const assetLabel = detectAssetLabel(lockTokenLower, isNative);
@@ -874,10 +882,10 @@ async function loadOneVault(addr) {
 
     let balanceBN;
     if (isNative) {
-      balanceBN = await provider.getBalance(addr);
+      balanceBN = await safeCall(() => provider.getBalance(addr));
     } else {
       const erc20 = new ethersLib.Contract(lockToken, erc20Abi, provider);
-      balanceBN = await erc20.balanceOf(addr);
+      balanceBN = await safeCall(() => erc20.balanceOf(addr));
     }
 
     let chosenPriceBN = ethersLib.constants.Zero;
@@ -892,7 +900,7 @@ async function loadOneVault(addr) {
     let priceValid = false;
 
     try {
-      const detail = await vault.priceDetail();
+      const detail = await safeCall(() => vault.priceDetail());
       chosenPriceBN = detail[0];
       primaryValid = detail[1];
       primaryPriceBN = detail[2];
@@ -1370,7 +1378,7 @@ async function updateVaultPrices() {
     let detail;
     try {
       const vault = new ethersLib.Contract(addr, vaultAbi, provider);
-      detail = await vault.priceDetail();
+      detail = await safeCall(() => vault.priceDetail());
     } catch {
       continue;
     }
