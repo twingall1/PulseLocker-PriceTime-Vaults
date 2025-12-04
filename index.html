@@ -143,20 +143,43 @@
       background: #ffffffcc;
       border: 1px solid #d0d0d0;
     }
+    
+    /* Light theme fixes for bold status tag borders */
+    body.light-theme .status-bad {
+      border: 2px solid #c62828 !important;
+      background: #ffffffcc !important;
+    }
+    
+    body.light-theme .status-ok {
+      border: 2px solid #1f7a34 !important;
+      background: #ffffffcc !important;
+    }
+    
+    body.light-theme .status-warn {
+      border: 2px solid #d4a017 !important;
+      background: #ffffffcc !important;
+    }
+
 
     .status-bad {   /* LOCKED (red) */
       color: #c62828 !important;
       padding: 3px 21px;
+      border: 2px solid #c62828 !important;
+      background: rgba(198, 40, 40, 0.15); /* subtle tint */
     }
     
     .status-ok {    /* UNLOCKED (green) */
       color: #1f7a34 !important;
       padding: 3px 19px;
+      border: 2px solid #1f7a34 !important;
+      background: rgba(31, 122, 52, 0.15);
     }
     
     .status-warn {  /* WITHDRAWN (gold) */
       color: #d4a017 !important;
       padding: 3px 12px;
+      border: 2px solid #d4a017 !important;
+      background: rgba(212, 160, 23, 0.15);
     }
 
     /* ===========================
