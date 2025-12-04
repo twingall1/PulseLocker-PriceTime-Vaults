@@ -28,6 +28,7 @@
       --copy-bg-hover: #1d4ed8;
       --min-btn: #facc15;
       --min-btn-hover: #fbbf24;
+      --vault-container-bg: #0f1428; /* slightly lighter than card-bg */
     }
 
     body.light-theme {
@@ -48,6 +49,7 @@
       --copy-bg-hover: #0059cc;
       --min-btn: #eab308;
       --min-btn-hover: #ca8a04;
+      --vault-container-bg: #f0f4ff; /* soft tint for day mode */
     }
 
     /* ===========================
@@ -80,7 +82,10 @@
       transition: transform 0.2s ease, opacity 0.2s ease;
       overflow-x: hidden;
     }
-
+    /* Distinct background for the "Your Vaults" container */
+    #locksContainerCard {
+      background: var(--vault-container-bg);
+    }
     body.light-theme .card {
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
