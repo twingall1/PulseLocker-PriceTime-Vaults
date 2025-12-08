@@ -1,6 +1,6 @@
-# PulseLocker — Immutable Price + Time-Based Vaults for PulseChain
+# PulseLocker — Immutable Discipline Vaults for PLS, pDAI, or HEX. Unlocking via USD price threshold, or via time (backup) 
 
-PulseLocker provides fully on-chain, single-use vaults for PulseChain tokens.  
+PulseLocker provides fully on-chain, single-use vaults for various PulseChain tokens.  
 Each vault unlocks permanently when **either**:
 
 - A user-defined **USD price target** is reached  
