@@ -2,19 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-  
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-  
-  <link rel="manifest" href="site.webmanifest">
-  
-  <meta name="theme-color" content="#050815">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PulseLocker</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
     /* ===========================
@@ -38,7 +27,7 @@
       --copy-bg-hover: #1d4ed8;
       --min-btn: #facc15;
       --min-btn-hover: #fbbf24;
-      --vault-container-bg: #1a2540; /* slightly lighter than card-bg */
+      --vault-container-bg: #1a2540;
     }
 
     body.light-theme {
@@ -59,21 +48,15 @@
       --copy-bg-hover: #0059cc;
       --min-btn: #eab308;
       --min-btn-hover: #ca8a04;
-      --vault-container-bg: #e3ecff; /* soft tint for day mode */
+      --vault-container-bg: #e3ecff;
     }
-    .header-tabs {
-        flex-grow: 0 !important;
-        flex-shrink: 0 !important;
-    }
-    /* ===========================
-       GLOBAL ELEMENTS
-       =========================== */
+
     body {
-      font-family: system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
       margin: 0;
       padding: 16px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, sans-serif;
       overflow-x: hidden;
     }
 
@@ -82,1434 +65,423 @@
       margin-bottom: 6px;
       font-size: 18px;
       line-height: 1.2;
-      color: var(--text);
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-bottom: 6px;
-      border: 1px solid var(--border);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-      transition: transform 0.2s ease, opacity 0.2s ease;
-      overflow-x: hidden;
-    }
-    /* Distinct background for the "Your Vaults" container */
-    #locksContainerCard {
-      background: var(--vault-container-bg);
-    }
-    body.light-theme .card {
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    }
-
-    input, button, select {
-      padding: 6px 8px;
-      border-radius: 8px;
-      border: 1px solid var(--input-border);
-      background: var(--input-bg);
-      color: var(--text);
-      font-size: 14px;
-    }
-
-    button {
-      cursor: pointer;
-      border: none;
-      background: var(--accent);
-      color: #ffffff;
-      font-weight: 600;
-      transition: background 0.15s;
-    }
-
-    button:hover { background: var(--accent-hover); }
-    button[disabled] { opacity: 0.5; cursor: not-allowed; }
-
-    select { cursor: pointer; }
-
-    .small {
-      font-size: 12px;
-      color: var(--subtext);
-    }
-
-    .mono {
-      font-family: Courier, monospace;
-      font-size: 13px;
-      color: #a5b4fc;
     }
 
     /* ===========================
-       STATUS TAGS
-       =========================== */
-    .tag {
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 600;
-      background: #11182733;
-      border: 1px solid var(--border);
-      margin-right: 6px;
-      margin-top: 4px;
-      display: inline-block;
-    }
-
-    body.light-theme .tag {
-      background: #ffffffcc;
-      border: 1px solid #d0d0d0;
-    }
-    
-    /* Light theme bold borders ONLY inside vault cards */
-    body.light-theme .vault-card .status-bad {
-      border: 2px solid #c62828 !important;
-      background: #ffffffcc !important;
-    }
-    
-    body.light-theme .vault-card .status-ok {
-      border: 2px solid #1f7a34 !important;
-      background: #ffffffcc !important;
-    }
-    
-    body.light-theme .vault-card .status-warn {
-      border: 2px solid #d4a017 !important;
-      background: #ffffffcc !important;
-    }
-
-
-    .status-bad {   /* LOCKED (red) */
-      color: #c62828 !important;
-      padding: 3px 21px;
-    }
-    
-    .status-ok {    /* UNLOCKED (green) */
-      color: #1f7a34 !important;
-      padding: 3px 19px;
-    }
-    
-    .status-warn {  /* WITHDRAWN (gold) */
-      color: #d4a017 !important;
-      padding: 3px 12px;
-    }
-    /* Bold status borders ONLY inside vault cards */
-    .vault-card .status-bad {
-      border: 2px solid #c62828 !important;
-      background: rgba(198, 40, 40, 0.15);
-    }
-    
-    .vault-card .status-ok {
-      border: 2px solid #1f7a34 !important;
-      background: rgba(31, 122, 52, 0.15);
-    }
-    
-    .vault-card .status-warn {
-      border: 2px solid #d4a017 !important;
-      background: rgba(212, 160, 23, 0.15);
-    }
-
-    /* ===========================
-       HEADER + WALLET BAR
+         HEADER (restructured)
        =========================== */
     .header-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-    }
-
-    .theme-toggle {
-      background: #334155;
-      padding: 4px 8px;
-      font-size: 12px;
-    }
-
-    body.light-theme .theme-toggle {
-      background: #e5e7eb;
-      color: #111827;
-    }
-
-    .wallet-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      align-items: flex-end;
-    }
-
-    .wallet-top-row {
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-
-    .disconnect-icon {
-      width: 28px;
-      height: 28px;
-      background: var(--copy-bg);
-      border-radius: 6px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      position:relative;
-      transition: background 0.15s;
-    }
-
-    .disconnect-icon:hover { background: var(--copy-bg-hover); }
-
-    .disconnect-icon svg {
-      width: 16px;
-      height: 16px;
-      fill: white;
-    }
-
-    .disconnect-tooltip {
-      position: absolute;
-      bottom: 100%;          
-      left: 50%;
-      transform: translateX(-50%) translateY(-6px);
-      background: #000000dd;
-      color: white;
-      padding: 3px 8px;
-      font-size: 11px;
-      border-radius: 4px;
-      white-space: nowrap;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.05s linear;
-    }
-
-    .disconnect-icon:hover .disconnect-tooltip {
-      opacity: 1;
-    }
-
-    /* ===========================
-       DASHBOARD GRID (DESKTOP)
-       =========================== */
-    .three-col-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 16px;
-    }
-    
-    /* Desktop: Swap Global Price Feed (col-2) with About This App (col-3) */
-    .col-2 { order: 3; }   /* Global Price Feed moves to right */
-    .col-3 { order: 2; }   /* About This App moves to center */
-
-    @media (max-width: 1100px) {
-      .three-col-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .form-row-h {
-      display: flex;
-      align-items: center;
+      flex-wrap: wrap; /* allows mobile layout */
       gap: 12px;
       margin-bottom: 12px;
     }
 
-    .form-row-h label {
-      min-width: 120px;
-      white-space: nowrap;
-    }
-
-    /* ===========================
-       VAULT CARDS (DESKTOP CORE)
-       =========================== */
-    .label-PLS,
-    .label-HEX,
-    .label-pDAI {
-      padding: 3px 8px;
-      border-radius: 6px;
-    }
-
-    #locksContainer {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .vault-card {
-      transition: opacity 0.15s ease, transform 0.15s ease;
-    }
-
-    .vault-card.collapsed .vault-body {
-      display: none;
-    }
-
-    .vault-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      white-space: normal;
-    }
-
-    .vault-body {
-      display: inline-flex;
-      align-items: flex-start;
-      gap: 24px;
-      width: 100%;
-    }
-
-    .vault-col-main {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .vault-col-buttons {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      gap: 6px;
-      margin-top: 11px;
-    }
-
-    .vault-col-pie {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .price-goal-pie {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      border: 1px solid #000;
-      background: #1f2937;
-    }
-
-    .pie-wrapper {
-      position: relative;
-      display: inline-block;
-    }
-
-    .pie-tooltip {
-      position: absolute;
-      background: #000000dd;
-      color: #fff;
-      padding: 3px 8px;
-      font-size: 11px;
-      border-radius: 4px;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -120%);
-      left: 50%;
-      top: 0;
-      opacity: 0;
-      transition: opacity 0.05s linear;
-    }
-
-    .vault-col-time {
-      white-space: nowrap;
-    }
-
-    .time-progress-bar-bg {
-      width: 100%;
-      height: 8px;
-      border-radius: 999px;
-      background: #1f2937;
-      overflow: hidden;
-    }
-
-    .time-progress-bar-fill {
-      height: 100%;
-      background: #22c55e;
-      border-radius: 999px;
-      transition: width 0.3s linear;
-    }
-
-    .vault-col-feeds {
-      min-width: 200px;
-      margin-top: 11px;
-    }
-
-    .copy-icon-btn {
-      position: relative;
-      width: 28px;
-      height: 28px;
-      background: var(--copy-bg);
-      border-radius: 6px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      margin-left: 6px;
-      transition: background 0.15s;
-    }
-
-    .copy-icon-btn:hover {
-      background: var(--copy-bg-hover);
-    }
-
-    .copy-icon-btn svg {
-      width: 16px;
-      height: 16px;
-      fill: #fff;
-    }
-
-    .copy-popup {
-      position: absolute;
-      top: -4px;
-      left: 18px;
-      background: #4ade80;
-      color: #000;
-      padding: 2px 6px;
-      font-size: 11px;
-      border-radius: 4px;
-      white-space: nowrap;
-      pointer-events: none;
-    }
-
-    .reorder-buttons {
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-      margin-left:4px;
-    }
-
-    .reorder-up,
-    .reorder-down {
-      width: 14px;
-      height: 14px;
-      background: #3b3f4a;
-      color: #d1d5db;
-      font-size: 10px;
-      border-radius: 3px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s ease;
-    }
-
-    .reorder-up:hover,
-    .reorder-down:hover {
-      background: #4b5563;
-      transform: scale(1.08);
-    }
-
-    .token-mini {
-      width:20px;
-      height:20px;
-      object-fit:contain;
-      vertical-align:middle;
-      margin:0 6px;
-    }
-
-    .minmax-btn {
-      background: var(--min-btn);
-      color: #111827;
-      font-size: 11px;
-      padding: 3px 6px;
-      border-radius: 6px;
-    }
-
-    .minmax-btn:hover {
-      background: var(--min-btn-hover);
-    }
-
-    /* Header title block */
     .header-left {
       display: flex;
       align-items: center;
       gap: 14px;
+      flex: 0 0 auto;
     }
-    
+
     .header-logo {
-      height: 68px;
+      height: 64px;
       width: auto;
     }
-    
-    .header-title-block > div:first-child {
+
+    .header-title-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-title-block div:first-child {
       font-size: 24px;
       font-weight: 700;
-      line-height: 1.2;
     }
-    
-    .header-title-block .header-subtitle {
+
+    .header-subtitle {
       font-size: 15px;
-      line-height: 1.25;
+      color: var(--subtext);
       margin-top: 3px;
     }
 
-    /* Header tabs */
+    /* === Tabs + Telegram wrapper === */
     .header-tabs {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 20px;
-      flex: 1;
+      gap: 14px;
+      flex: 0 0 auto;
     }
-    
+
     .header-tab {
       font-size: 16px;
       font-weight: 600;
+      padding: 6px 14px;
       color: #9ca3af;
       text-decoration: none;
-      padding: 4px 10px;
       border-radius: 6px;
       transition: 0.15s ease;
+      white-space: nowrap;
     }
-    
+
     .header-tab:hover {
       color: #60a5fa;
     }
-    
+
     .active-header-tab {
-      color: white;
       background: #1e3a8a;
       border: 1px solid #3b82f6;
+      color: white;
     }
+
     .telegram-btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0;
-      margin-left: 10px;
-      text-decoration: none;
     }
-    
+
     .telegram-icon {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       opacity: 0.85;
-      transition: opacity 0.15s, transform 0.15s ease;
+      transition: 0.15s ease;
     }
-    
+
     .telegram-icon:hover {
       opacity: 1;
-      transform: scale(1.12);
+      transform: scale(1.1);
     }
 
-    /* VIEW-ONLY label (non-interactive, same footprint as Withdraw) */
-    .view-only-label {
+    /* ===========================
+         WALLET AREA
+       =========================== */
+    .header-right {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex: 0 0 auto;
+    }
+
+    .wallet-top-row {
+      display: flex;
       align-items: center;
-      background: #facc15;
-      color: #111;
-      font-weight: 600;
-      padding: 5px 10px;
-      border-radius: 8px;
-      border: 1px solid #b38c00;
-      width: 100%;
-      font-size: 12px;
-      box-sizing: border-box;
-      white-space: nowrap;
-      cursor: default;
-      pointer-events: none;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
-    /* Desktop pie/time row */
-    .vault-mobile-row {
-      display: flex;
-      flex-direction: row;
-      gap: 20px;
-      width: 100%;
-    }
-
-    .vault-mobile-row .vault-col-pie,
-    .vault-mobile-row .vault-col-time {
-      flex: 1 1 50%;
-      box-sizing: border-box;
-      min-width: 0;
-    }
-
-    /* User guide layout tweaks */
-    #view-userguide {
-      max-width: 800px;
-      margin: 0 auto;
-      margin-top: 16px;
-    }
-
-    #view-userguide h1 {
-      font-size: 26px;
-      margin-bottom: 10px;
-    }
-
-    #view-userguide h2 {
-      margin-top: 24px;
-      color: #93c5fd;
-      font-size: 20px;
-    }
-
-    #view-userguide a {
-      color: #3b82f6;
-      text-decoration: none;
-    }
-
-    /* Ensure views are real containers (used by JS toggle) */
-    #view-dashboard,
-    #view-userguide {
-      width: 100%;
-      display: block;
-    }
-    .time-progress-bar-bg {
-      width: 180px !important;
-    }
-    /* ======================================================
-       FOREIGN RESCUE COLUMN (Desktop)
-       ====================================================== */
-    .vault-col-rescue-foreign {
-      display: none; /* collapse when empty */
-    }
-        /* ============================================
-       HEADER LAYOUT FIX — Compact Tabs + Telegram
-       ============================================ */
-    
-    /* Header container: keep items together */
-    .header-tabs {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 12px; /* set clean spacing between dashboard / userguide */
-        margin-right: 12px;
-    }
-    
-    /* Tabs: compact width, no forced expansion */
-    .header-tab {
-        display: inline-flex;
-        padding: 6px 14px;
-        white-space: nowrap;
-    }
-    
-    /* Telegram icon container */
-    .header-telegram {
-        display: flex;
-        align-items: center;
-        padding-left: 12px;
-    }
-    
-    /* Telegram icon button */
-    .header-telegram img {
-        width: 28px;
-        height: 28px;
-        opacity: 0.9;
-        cursor: pointer;
-        transition: 0.15s ease;
-    }
-    .header-telegram img:hover {
-        opacity: 1;
-    }
-
-    @media (min-width: 700px) {
-      .vault-col-rescue-foreign {
-        flex-direction: column;
-        gap: 6px;
-        margin-top: 11px;
-      }
-    
-      .vault-foreign-rescue-btn {
-        background: #1d4ed8;
-        color: white;
-        border-radius: 8px;
-        padding: 6px 10px;
-        font-size: 13px;
-        white-space: nowrap;
-      }
-    }
-
-    /* ====================================================== =========================== 
-       MOBILE LAYOUT (<=700px)
-       ====================================================== ===========================  */
+    /* ===========================
+         MOBILE HEADER LAYOUT
+       =========================== */
     @media (max-width: 700px) {
-      /* FOREIGN RESCUE COLUMN — Mobile Layout */
-      .vault-col-rescue-foreign {
-        display: none; /* collapsed unless needed */
-        order: 4;      /* appear right after .vault-col-buttons */
-        flex-direction: row;
-        justify-content: space-between;
-        gap: 8px;
-        width: 100%;
-      }
-    
-      .vault-foreign-rescue-btn {
-        flex: 1 1 48%;
-        padding: 5px 8px !important;
-        font-size: 12px !important;
-        background: #1d4ed8;
-        color: white;
-        border-radius: 8px;
-        white-space: nowrap;
-      }
 
-      /* Body padding a bit tighter */
-      body {
-        padding-left: 8px !important;
-        padding-right: 8px !important;
-      }
+      /* Row 1: logo + title (already handled by wrapping) */
 
-      /* Mobile: keep header left + tabs on the same line */
-      .header-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-      }
-      
-      /* But header-left + header-tabs should be inline */
-      .header-left, 
+      /* Row 2: tabs + telegram (inline, no stacking) */
       .header-tabs {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        gap: 10px !important;
-        width: auto !important;
-      }
-
-
-      .header-left {
+        order: 2;
+        flex: 0 0 auto;
+        display: flex;
         flex-direction: row;
         align-items: center;
-        gap: 10px;
-        width: 100%;
-      }
-
-      .header-logo {
-        height: 48px !important;
-      }
-
-      .header-title-block > div:first-child {
-        font-size: 17px !important;
-      }
-
-      .header-subtitle {
-        font-size: 12px !important;
-      }
-
-      .header-tabs {
-          width: auto !important;
-          justify-content: flex-start;
-          gap: 10px !important;
-          flex-wrap: nowrap !important;
+        justify-content: flex-start;
+        gap: 8px;
+        width: auto;
+        flex-wrap: nowrap;
       }
 
       .header-tab {
-        font-size: 14px !important;
-        padding: 3px 8px !important;
-      }
-
-      .header-right {
-        width: 100%;
-      }
-
-      .wallet-top-row {
-        gap: 6px;
-        flex-wrap: wrap;
-      }
-
-      #connectBtn,
-      #themeToggle {
+        font-size: 13px !important;
         padding: 4px 8px !important;
-        font-size: 12px !important;
       }
 
-      .disconnect-icon {
-        width: 24px !important;
-        height: 24px !important;
+      .telegram-icon {
+        width: 26px !important;
+        height: 26px !important;
       }
 
-      /* Dashboard as a simple column on mobile */
-      #view-dashboard {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 12px;
-      }
-
-      .three-col-grid {
-        display: contents;
-      }
-
-      /* Break col-1 so its two cards can be ordered individually if needed */
-      .col-1 {
-        display: contents;
-      }
-
-      /* Top card sizing */
-      .three-col-grid .card {
-        padding: 8px 10px !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box;
-      }
-
-      .col-1, .col-2, .col-3 {
-        padding-left: 2px !important;
-        padding-right: 2px !important;
-      }
-
-      .three-col-grid h2 {
-        font-size: 16px !important;
-        line-height: 1.2 !important;
-      }
-
-      .card h2 {
-        font-size: 15px !important;
-      }
-
-      .form-row-h {
-        gap: 8px !important;
-        margin-bottom: 10px !important;
-      }
-
-      .form-row-h label {
-        min-width: 90px !important;
-        font-size: 13px !important;
-      }
-
-      .form-row-h input,
-      .form-row-h select {
+      /* Row 3: wallet area (right aligned) */
+      .header-right {
+        order: 3;
         width: 100%;
-        max-width: 100%;
-        font-size: 13px !important;
-        padding: 5px 6px !important;
+        align-items: flex-end;
       }
-
-      #restoreVaultsBtn,
-      #addVaultBtn {
-        padding: 5px 10px !important;
-        font-size: 13px !important;
+    }
+     /* ===========================
+         DASHBOARD + VAULTS
+         =========================== */
+  
+      .three-col-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 16px;
       }
-
-      button {
-        font-size: 13px !important;
-        padding: 5px 10px !important;
+  
+      @media (max-width: 1100px) {
+        .three-col-grid {
+          grid-template-columns: 1fr;
+        }
       }
-
-      /* Vault header mobile layout */
-      .vault-header {
-        flex-wrap: wrap;
-        align-items: flex-start;
-        row-gap: 4px;
-      }
-
-      .vault-header .vault-asset-label,
-      .vault-header .tag {
-        flex: 0 0 auto;
-      }
-
-      .vault-header input.mono {
-        flex: 1 1 55%;
-        max-width: 55% !important;
-        font-size: 11px;
-      }
-
-      .vault-header .copy-icon-btn,
-      .vault-header .minmax-btn,
-      .vault-header .reorder-buttons {
-        flex: 0 0 auto;
-      }
-
-      .reorder-buttons {
-        flex-direction: column;
-        gap: 2px;
-        margin-left: 2px;
-      }
-
-      /* Vault body mobile layout:
-         Row 1: main (full width)
-         Row 2: left = pie+time (vertical), right = feeds
-         Row 3: buttons (bottom, side-by-side)
-      */
-      .vault-body {
-        display: flex !important;
-        flex-wrap: wrap;
-        align-items: flex-start;
-        gap: 12px;
-      }
-
-      .vault-col-main {
-        flex: 0 0 100%;
-      }
-
-      .vault-col-main .col1-line {
-        font-size: 12px;
-      }
-
-      /* Left side: pie + time stacked vertically */
-      .vault-mobile-row {
-        order: 2;
-        flex: 0 0 40%;
-        display: flex !important;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .vault-mobile-row .vault-col-pie,
-      .vault-mobile-row .vault-col-time {
-        flex: 0 0 auto;
-        max-width: 100%;
-      }
-
-      .vault-col-time {
-        text-align: center;
-      }
-
-      /* Right side: feeds */
-      .vault-col-feeds {
-        order: 2;
-        flex: 0 0 60%;
-        font-size: 11px;
-        white-space: normal;
-        margin-top: 0;
-      }
-
-      /* Buttons at bottom */
-      .vault-col-buttons {
-        order: 3;
-        flex: 0 0 100%;
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 8px;
-      }
-
-      .vault-col-buttons button,
-      .vault-col-buttons .view-only-label {
-        flex: 1 1 48%;
-        padding: 5px 8px !important;
-        font-size: 12px !important;
-        white-space: nowrap;
-      }
-
-      /* MOBILE DASHBOARD ORDERING (backup; JS does primary reorder) */
-      .col-1 .card:nth-of-type(1) {
-        order: 1;
-      }
-
+  
       #locksContainerCard {
-        order: 2;
+        background: var(--vault-container-bg);
       }
-
-      .col-3 {
-        order: 3;
+  
+      #locksContainer {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
       }
-
-      .col-2 {
-        order: 4;
+  
+      .card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        margin-bottom: 6px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.25);
       }
-
-      .col-1 .card:nth-of-type(2) {
-        order: 99;
+  
+      /* ===========================
+         USER GUIDE SECTION
+         =========================== */
+      #view-userguide {
+        max-width: 800px;
+        margin: 0 auto;
+        margin-top: 12px;
+        display: none; /* router toggles this */
       }
-            /* Mobile header compact layout */
-      .header-tabs {
-          gap: 8px !important;
+  
+      #view-userguide h1 {
+        font-size: 26px;
+        margin-bottom: 10px;
       }
-      
-      .header-telegram {
-          padding-left: 8px !important;
+  
+      #view-userguide h2 {
+        margin-top: 22px;
+        color: #93c5fd;
+        font-size: 20px;
       }
-      
-      .header-telegram img {
-          width: 26px;
-          height: 26px;
+  
+      #view-userguide a {
+        color: #3b82f6;
       }
-
-    }
-    //////////////////////////////////////////////////////////
-    /* FIX: allow minimize to work on mobile (override flex !important) */
-    .vault-card.collapsed .vault-body {
-      display: none !important;
-    }
-
-    /* Remove button should match VIEW ONLY size */
-    .vault-col-buttons button[data-role="remove"] {
-      padding: 5px 10px !important;
-      font-size: 13px !important;
-    }
-    /* FINAL authority: collapsed vaults must always hide body (mobile or desktop) */
-    .vault-card.collapsed .vault-body {
-      display: none !important;
-    }
-        /* Divider line for bottom of user guide */
-    .userguide-divider {
-      width: 100%;
-      height: 1px;
-      background: #ffffff33; /* subtle white line */
-      margin: 30px 0 20px 0;
-    }
-    
-    /* Title above example image */
-    .example-vaults-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: var(--subtext);
-    }
-    
-    /* Responsive vault example image */
-    .example-vaults-img {
-      width: 100%;
-      max-width: 100%;
-      height: auto;
-      border-radius: 12px;
-    }
-    
-    /* Desktop image default */
-    .example-img-desktop {
-      display: block;
-    }
-    
-    /* Mobile image hidden by default */
-    .example-img-mobile {
-      display: none;
-    }
-    
-    /* Swap on mobile */
-    @media (max-width: 768px) {
-      .example-img-desktop {
-        display: none;
-      }
-      .example-img-mobile {
-        display: block;
-      }
-    }
-
-  </style>
-</head>
-
-<body>
-
-  <header class="header-row">
-    <div class="header-left">
-      <img src="pulselocker-logo-websiteHeader.png" alt="PLS_LKR" class="header-logo">
-      <div class="header-title-block">
-        <div><b>PulseLocker</b></div>
-        <div class="header-subtitle small">
-          PLS / pDAI / HEX vaults: Unlock at target price or backup time
+  
+    </style>
+  </head>
+  
+  <body>
+  
+    <!-- ===========================
+         HEADER AREA
+         =========================== -->
+    <div class="header-row">
+  
+      <!-- LEFT: Logo + Title -->
+      <div class="header-left">
+        <img src="assets/logo.png" class="header-logo" />
+        <div class="header-title-block">
+          <div>PulseLocker</div>
+          <div class="header-subtitle">PLS / pDAI / HEX vaults: Unlock at target price or backup time</div>
         </div>
       </div>
+  
+      <!-- MIDDLE: Tabs + Telegram -->
+      <div class="header-tabs">
+        <a id="tab-dashboard" href="#dashboard" class="header-tab active-header-tab">Dashboard</a>
+        <a id="tab-userguide" href="#userguide" class="header-tab">User Guide</a>
+  
+        <a href="https://t.me/pulselocker" target="_blank" class="telegram-btn">
+          <img src="assets/telegram.png" class="telegram-icon" />
+        </a>
+      </div>
+  
+      <!-- RIGHT: Wallet area -->
+      <div class="header-right">
+        <div class="wallet-top-row">
+          <button id="themeToggle">🌞 Day</button>
+          <button id="connectBtn">Connect</button>
+        </div>
+        <div id="walletAddress" class="mono small"></div>
+        <div id="networkInfo" class="small"></div>
+      </div>
+  
     </div>
-    
-    <a href="#dashboard" class="header-tab" id="tab-dashboard">Dashboard</a>
-    <a href="#userguide" class="header-tab" id="tab-guide">User Guide</a>
+      <!-- ===========================
+       HEADER AREA
+       =========================== -->
+  <div class="header-row">
 
-    
-      <!-- TELEGRAM BUTTON -->
+    <!-- LEFT: Logo + Title -->
+    <div class="header-left">
+      <img src="assets/logo.png" class="header-logo" />
+      <div class="header-title-block">
+        <div>PulseLocker</div>
+        <div class="header-subtitle">PLS / pDAI / HEX vaults: Unlock at target price or backup time</div>
+      </div>
+    </div>
+
+    <!-- MIDDLE: Tabs + Telegram -->
+    <div class="header-tabs">
+      <a id="tab-dashboard" href="#dashboard" class="header-tab active-header-tab">Dashboard</a>
+      <a id="tab-userguide" href="#userguide" class="header-tab">User Guide</a>
+
       <a href="https://t.me/pulselocker" target="_blank" class="telegram-btn">
-        <img src="telegram.png" alt="Telegram" class="telegram-icon">
+        <img src="assets/telegram.png" class="telegram-icon" />
       </a>
     </div>
 
+    <!-- RIGHT: Wallet area -->
     <div class="header-right">
-      <div class="wallet-info">
-        <div class="wallet-top-row">
-          <button id="themeToggle" class="theme-toggle">🌙 Night</button>
-          <button id="connectBtn">Connect Wallet</button>
-          <div id="disconnectBtn" class="disconnect-icon" style="display:none;">
-            <svg viewBox="0 0 24 24">
-              <path d="M10 17l1.41-1.41L7.83 12l3.58-3.59L10 7l-5 5 5 5zm4-12h6v14h-6v2h8V3h-8v2z"/>
-            </svg>
-            <div class="disconnect-tooltip">Disconnect</div>
-          </div>
-        </div>
-
-        <span id="walletAddress" class="mono"></span>
-        <div class="small" id="networkInfo"></div>
+      <div class="wallet-top-row">
+        <button id="themeToggle">🌞 Day</button>
+        <button id="connectBtn">Connect</button>
       </div>
+      <div id="walletAddress" class="mono small"></div>
+      <div id="networkInfo" class="small"></div>
     </div>
-  </header>
 
-  <!-- DASHBOARD VIEW -->
+  </div>
+
+  <!-- ===========================
+       DASHBOARD VIEW
+       =========================== -->
   <div id="view-dashboard">
+
     <div class="three-col-grid">
-      <!-- COLUMN 1 -->
+
+      <!-- LEFT COLUMN -->
       <div class="col-1">
         <div class="card">
           <h2>Create New Vault</h2>
           <form id="createForm">
             <div class="form-row-h">
-              <label>Lock Token</label>
+              <label>Asset:</label>
               <select id="assetSelect">
-                <option value="PLS">PLS (native)</option>
-                <option value="PDAI">pDAI (token)</option>
-                <option value="HEX">HEX (token)</option>
+                <option value="PLS">PLS</option>
+                <option value="HEX">HEX</option>
+                <option value="pDAI">pDAI</option>
               </select>
             </div>
 
             <div class="form-row-h">
-              <label>Target price ($)</label>
-              <input id="targetPrice" type="text" placeholder="0.0100" required />
+              <label>Target Price ($):</label>
+              <input id="targetPrice" type="number" min="0" step="0.000001" />
             </div>
 
             <div class="form-row-h">
-              <label>Unlock Time</label>
-              <input id="unlockDateTime" type="datetime-local" required />
-              <button type="submit" id="createBtn" style="margin-left:12px;">Create Vault</button>
+              <label>Backup Time:</label>
+              <input id="unlockDateTime" type="datetime-local" />
             </div>
 
-            <div id="createStatus" class="small" style="margin-top:6px;"></div>
+            <button id="createBtn" type="button">Create Vault</button>
+            <div id="createStatus" class="small"></div>
           </form>
         </div>
 
         <div class="card">
-          <h2>Add Vault Address Manually</h2>
-          <div class="small">
-            Paste any supported vault created by this factory.
+          <h2>Your Vaults</h2>
+          <div id="locksContainerCard" class="card">
+            <div id="locksContainer"></div>
           </div>
 
-          <div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
-            <input id="manualVaultInput" type="text" placeholder="0x..."
-                   style="flex:1;min-width:200px;" />
-            <button id="addVaultBtn">Add</button>
-
-            <button id="restoreVaultsBtn"
-              style="
-                background:#1e40af;
-                color:white;
-                padding:6px 12px;
-                border-radius:6px;
-                cursor:pointer;
-                font-size:13px;
-                white-space:nowrap;">
-              Restore All Vaults
-            </button>
+          <div class="form-row-h">
+            <input id="manualVaultInput" placeholder="Add existing vault address…" class="mono" />
+            <button id="addVaultBtn" type="button">Add</button>
           </div>
-
           <div id="manualAddStatus" class="small"></div>
+
+          <button id="restoreVaultsBtn" type="button">Restore All</button>
         </div>
       </div>
 
-      <!-- COLUMN 2 -->
+      <!-- CENTER COLUMN -->
       <div class="col-2">
         <div class="card">
-          <h2>Global Price Feed <span id="gpfAsset"></span></h2>
-          <div class="small" style="margin-bottom:6px;">
-            Source: PulseX pools for the selected asset.<br>
-            Uses primary (<b>1°</b>) & backup (<b>2°</b>) feeds.<br>
-            Feeds chosen by USD-normalized liquidity.<br><br>
-          </div>
-          <div id="globalPrice"></div>
+          <h2>Global Price Feed</h2>
+          <div id="pairAddress" class="mono small"></div>
+          <div id="globalPrice" style="margin-top:8px;font-size:22px;"></div>
           <div id="globalPriceRaw" class="small"></div>
         </div>
       </div>
 
-      <!-- COLUMN 3 -->
+      <!-- RIGHT COLUMN -->
       <div class="col-3">
         <div class="card">
           <h2>About This App</h2>
-          <div class="small">
-            <ul style="margin:0;padding-left:18px;">
-              <li>Immutable Discipline Vaults for PLS, pDAI, or HEX. Unlocking via USD price threshold, or via time (backup)</li>
-              <li>
-                Verified Factory Contract, view on:
-                <a href="https://scan.pulsechain.com/address/0x51379ABd46f1711ca7bEF589c80c91E13CBbb6E7"
-                   target="_blank" style="color:#3b82f6;">PulseScan</a>,
-                <a href="https://otter.pulsechain.com/address/0x51379ABd46f1711ca7bEF589c80c91E13CBbb6E7/contract"
-                   target="_blank" style="color:#3b82f6;">Otter.pulsechain</a>,
-                <a href="https://repo.sourcify.dev/369/0x51379ABd46f1711ca7bEF589c80c91E13CBbb6E7"
-                   target="_blank" style="color:#3b82f6;">Sourcify</a>. (0x51379ABd46f1711ca7bEF589c80c91E13CBbb6E7)
-              </li>
-              <li>
-                Browse the public 
-                <a href="https://github.com/twingall1/PulseLocker-PriceTime-Vaults" 
-                   target="_blank" 
-                   style="color:#3b82f6;">
-                  GitHub repository
-                </a>
-              </li>
-              <li>Feeds from PulseX pools, primary and backup.</li>
-              <li>No admin keys; all logic on-chain.</li>
-              <li>Time unlock as unbrickable failsafe.</li>
-              <li>Factory registry enables vault restore.</li>
-              <li>Intended as Single-use vaults.</li>
-              <li>Rescue function for accidental 2nd deposits, and misplaced PLS/pDai/HEX (buttons appear as needed)</li>
-              <li>Rescue <strong>other</strong> prc20 tokens accidentally sent to a vault: 
-                  <a href="#" id="deepRescueLink" style="color:#3b82f6; font-weight:600; cursor:pointer;">
-                      Deep Rescue 
-                  </a>
-              </li>
-            </ul>
-            <div style="margin-top:6px; color:#facc15;">
-              ⚠ 0.5% fee on successful withdrawal.
-            </div>
-          </div>
+          <p style="font-size:14px;line-height:1.4;">
+            PulseLocker provides immutable price-trigger vaults for PLS / HEX / pDAI.
+            Unlock occurs when your chosen price target is hit or when backup time arrives —
+            whichever happens first.
+          </p>
         </div>
       </div>
-    </div>
-
-    <div class="card" id="locksContainerCard">
-      <h2>Your Vaults</h2>
-      <div id="locksContainer" class="small">Connect wallet to load.</div>
-    </div>
-  </div>
-
-  <!-- USER GUIDE VIEW -->
-  <div id="view-userguide" style="display:none;">
-    <div class="card">
-      <h1>PulseLocker – User Guide</h1>
-      <p>
-        PulseLocker lets you create immutable single-use vaults for PLS, pDAI, or HEX.<br> 
-        Each vault unlocks when either a <strong>target USD price is met</strong> or a backup
-        <strong>time unlock arrives.</strong><br> Everything is fully on-chain with no admin keys.<br>
-        The contract is fully verified, immutable, and on-chain, so no one — including the creator — can alter, pause, or access your vault.
-      </p>
-      <h2>0) Connect Your Wallet</h2>
-      <p>
-          To begin, connect your Web3 wallet to PulseLocker using your browser’s
-          wallet extension (such as <strong>MetaMask</strong> or <strong>OKX</strong>). 
-          This allows the app to read your address and display any vaults you have created.
-      </p>
-      <p>
-          PulseLocker never takes custody of your keys, cannot move your funds,
-          and cannot change or access your vaults. Connecting your wallet simply
-          enables the app to interact with the smart contracts on your behalf.
-      </p>
-      <h2>1) Choose Asset Type</h2>
-      <p>
-        Start by selecting which token you want to lock:
-      </p>
-      <ul>
-        <li><strong>PLS</strong> (native)</li>
-        <li><strong>pDAI</strong></li>
-        <li><strong>HEX</strong></li>
-      </ul>
-      <p>
-        Each asset has its own PulseX primary and backup price feeds, chosen automatically by USD-normalized liquidity.
-      </p>
-
-      <h2>2) Set Your Target USD Price</h2>
-      <p>
-        Enter the price (in USD) that must be reached for the vault to unlock via the price condition.
-        <br>
-        Example: <code>0.0045</code> means “unlock when 1 HEX ≥ $0.0045”.
-      </p>
-
-      <h2>3) Set a Time Unlock (Backup)</h2>
-      <p>
-        Choose a date and time in the future.  
-        This ensures the vault <em>always</em> unlocks eventually even if price conditions fail or feeds are unavailable.
-        We use two feeds for redundancy: if one pool has low liquidity or stale data, the vault can fall back to the other.
-        When checking price, the vault automatically picks whichever feed has the larger USD-side liquidity, since that pool gives the most reliable price at that moment.
-      </p>
-
-      <h2>4) Create the Vault</h2>
-      <p>
-        Connect your PulseChain wallet and click <strong>Create Vault</strong>.  
-        This deploys a brand-new immutable vault contract that only you own.
-      </p>
-
-      <h2>5) Deposit Tokens</h2>
-      <p>
-        After creation, simply send PLS / pDAI / HEX to the vault address whenever you want.  
-        There is no deadline — deposit at your leisure.
-      </p>
-
-      <h2>6) Unlock Conditions</h2>
-      <p>Your vault becomes withdrawable when:</p>
-      <ul>
-        <li><strong>The target USD price is met</strong>, OR</li>
-        <li><strong>The time unlock is reached</strong></li>
-      </ul>
-
-      <h2>7) Withdrawing</h2>
-      <p>
-        Once unlocked, click <strong>Withdraw</strong>.
-        <br>A 0.5% fee is taken automatically (on successful withdrawals only).
-        <br><strong>After withdrawal, the vault will never lock tokens again.</strong>
-      </p>
-
-      <!-- SEPARATOR ----------------------------------------------------------->
-      <hr style="margin: 32px 0;">
-  
-      <h2>Other Things to Know</h2>
-      <p>
-        The following sections explain vault behaviour after withdrawal and how to manage vaults 
-        in the dashboard.
-      </p>
-  
-      <!-- EXTRA INFO 1 -------------------------------------------------------->
-      <h3>Accidentally Sent More Funds?</h3>
-      <p>
-        After withdrawal, the vault is considered “finished”.  
-        If you later send tokens to it by mistake, they will not be price-locked.
-      </p>
-      <p>
-        The UI will show a <strong>Rescue</strong> button, allowing you to retrieve them immediately.
-      </p>
-  
-      <!-- EXTRA INFO 2 -------------------------------------------------------->
-      <h3>Single-Use Design</h3>
-      <p>
-        Each vault is intentionally a <strong>single-cycle</strong> discipline vault:
-      </p>
-      <ul>
-        <li>Create vault</li>
-        <li>Deposit tokens</li>
-        <li>Unlock via time or price</li>
-        <li>Withdraw once</li>
-        <li>Vault becomes inactive (rescue only)</li>
-      </ul>
-  
-      <!-- EXTRA INFO 3 -------------------------------------------------------->
-      <h3>Managing Your Vaults</h3>
-      <ul>
-        <li><strong>Remove a vault</strong> – Click <em>Remove</em> to hide it from your UI (vault remains on-chain).</li>
-        <li><strong>Restore all vaults</strong> – Click <em>Restore All Vaults</em> to reload every vault created by the connected address.</li>
-        <li><strong>Re-add a vault</strong> – Paste any vault address into <em>Add Vault Address Manually</em>.</li>
-        <li><strong>View-only vaults</strong> – You may view and deposit into vaults you don't own, but cannot withdraw.</li>
-        <li><strong>Reorder vaults</strong> – Use the <em>▲</em> / <em>▼</em> arrows.</li>
-        <li><strong>Minimize / maximize</strong> – Collapse or expand a vault using the <em>Min / Max</em> button.</li>
-        <li><strong>Import Vaults from another wallet</strong> – Vaults display, but no withdraw function, and marked: <em>View Only</em></li>
-      </ul>
-      <!-- Bottom Divider -->
-      <div class="userguide-divider"></div>
-      
-      <!-- Example Vaults Title -->
-      <div class="example-vaults-title">Example Vaults</div>
-      
-      <!-- Desktop Example Image -->
-      <img 
-        src="exampleVaultsDesktop.png" 
-        alt="Example Vaults Desktop" 
-        class="example-vaults-img example-img-desktop"
-      />
-      
-      <!-- Mobile Example Image -->
-      <img 
-        src="exampleVaultsMobile.png"
-        alt="Example Vaults Mobile"
-        class="example-vaults-img example-img-mobile"
-      />
-
-      <div style="margin-top: 24px; display: flex; justify-content: flex-start; gap: 24px;">
-      
-        <a href="#" onclick="showDashboard(); return false;"
-           style="color:#3b82f6; text-decoration:none; font-weight:600;">
-          ← Back to PulseLocker App
-        </a>
-      
-        <a href="https://t.me/pulselocker" target="_blank"
-           style="color:#3b82f6; text-decoration:none; font-weight:600;">
-          Join the Telegram Community →
-        </a>
-
-</div>
 
     </div>
   </div>
 
-  <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <!-- ===========================
+       USER GUIDE VIEW
+       =========================== -->
+  <div id="view-userguide">
+
+    <h1>User Guide</h1>
+
+    <p>This guide explains how to use PulseLocker vaults, how unlock conditions work, and how to restore previously created vaults.</p>
+
+    <h2>Creating a Vault</h2>
+    <p>Select an asset (PLS / HEX / pDAI), choose a target price and a backup unlock time. Once created, vault rules cannot be changed.</p>
+
+    <h2>Unlock Logic</h2>
+    <p>A vault unlocks at whichever occurs first:<br/>
+       – Target price is reached<br/>
+       – Backup time arrives</p>
+
+    <h2>Viewing Other Wallets' Vaults</h2>
+    <p>You can add a vault by address to view its progress. Withdraw and rescue buttons will not appear unless the connected wallet is the vault owner.</p>
+
+    <div style="height:40px;"></div>
+  </div>
+
+  <!-- ===========================
+       JAVASCRIPT (Router + App)
+       =========================== -->
   <script src="app.js"></script>
-
   <script>
-  /* ============================================================
-     SPA VIEW ROUTER (Dashboard <-> User Guide)
-     ============================================================ */
-  function routerApplyView(view) {
-    const dash  = document.getElementById("view-dashboard");
-    const guide = document.getElementById("view-userguide");
-  
-    if (view === "userguide") {
-      dash.style.setProperty("display", "none", "important");
-      guide.style.setProperty("display", "block", "important");
-      document.getElementById("tab-dashboard").classList.remove("active-header-tab");
-      document.getElementById("tab-guide").classList.add("active-header-tab");
-    } else {
-      dash.style.setProperty("display", "block", "important");
-      guide.style.setProperty("display", "none", "important");
-      document.getElementById("tab-guide").classList.remove("active-header-tab");
-      document.getElementById("tab-dashboard").classList.add("active-header-tab");
-    }
-  }
-  
-  /* ============================================================
-     Determine view from hash
-     ============================================================ */
-  function routerUpdateFromHash() {
-    const h = window.location.hash.toLowerCase();
-    if (h === "#userguide") routerApplyView("userguide");
-    else routerApplyView("dashboard");
-  }
-  
-  // Trigger router on load
-  window.addEventListener("DOMContentLoaded", routerUpdateFromHash);
-  
-  // Trigger router on back/forward navigation
-  window.addEventListener("hashchange", routerUpdateFromHash);
-  </script>
+    /* =============================================
+       SPA ROUTER — Dashboard / User Guide
+       ============================================= */
+    function applyView(view) {
+      const dash  = document.getElementById("view-dashboard");
+      const guide = document.getElementById("view-userguide");
 
+      const tabDash  = document.getElementById("tab-dashboard");
+      const tabGuide = document.getElementById("tab-userguide");
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      if (typeof setGpfTitleSuffix === "function") {
-        setGpfTitleSuffix(""); // no suffix until connected
+      if (view === "userguide") {
+        dash.style.display = "none";
+        guide.style.display = "block";
+        tabDash.classList.remove("active-header-tab");
+        tabGuide.classList.add("active-header-tab");
+      } else {
+        dash.style.display = "block";
+        guide.style.display = "none";
+        tabGuide.classList.remove("active-header-tab");
+        tabDash.classList.add("active-header-tab");
       }
-    });
-  </script>
-
-  <script>
-    function reorderMobileDashboard() {
-      if (window.innerWidth > 700) return; // desktop unchanged
-  
-      const dashboard = document.querySelector('#view-dashboard');
-  
-      // CARDS (actual DOM elements)
-      const createCard = document.querySelector('.col-1 .card:nth-of-type(1)');
-      const addCard    = document.querySelector('.col-1 .card:nth-of-type(2)');
-      const aboutCard  = document.querySelector('.col-3');
-      const feedCard   = document.querySelector('.col-2');
-      const locksCard  = document.getElementById('locksContainerCard');
-  
-      // STOP if any missing (prevents errors)
-      if (!createCard || !addCard || !aboutCard || !feedCard || !locksCard) return;
-  
-      // REMOVE them from DOM (safe)
-      createCard.remove();
-      addCard.remove();
-      aboutCard.remove();
-      feedCard.remove();
-      locksCard.remove();
-  
-      // APPEND in correct final order
-      dashboard.appendChild(createCard);  // 1) Create New Vault
-      dashboard.appendChild(locksCard);   // 2) Your Vaults
-      dashboard.appendChild(aboutCard);   // 3) About This App
-      dashboard.appendChild(feedCard);    // 4) Global Price Feed
-      dashboard.appendChild(addCard);     // 5) Add Vault Address Manually
     }
-  
-    // Run once at load and once on resize
-    document.addEventListener("DOMContentLoaded", reorderMobileDashboard);
-    window.addEventListener("resize", reorderMobileDashboard);
+
+    function updateFromHash() {
+      const h = window.location.hash.toLowerCase();
+      if (h === "#userguide") applyView("userguide");
+      else applyView("dashboard");
+    }
+
+    window.addEventListener("DOMContentLoaded", updateFromHash);
+    window.addEventListener("hashchange", updateFromHash);
   </script>
-<!-- Deep Rescue Modal -->
-<div id="deepRescueModal" 
-     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
-            background:rgba(0,0,0,0.55); z-index:9999;">
 
-  <div style="background:#1e1e1e; color:white; width:400px; padding:20px; 
-              margin:100px auto; border-radius:12px; border:1px solid #444;">
-    
-    <h3 style="margin-top:0;">Deep Rescue</h3>
-    <p style="margin-bottom:12px; font-size:14px; color:#ccc;">
-      Use this tool to rescue foreign ERC-20 tokens mistakenly sent to a vault.
-    </p>
-
-    <label>Vault Address:</label>
-    <input id="deepRescueVault" 
-           style="width:100%; padding:6px; margin-bottom:10px; border-radius:6px; border:1px solid #444;">
-    
-    <label>Token Address to Rescue:</label>
-    <input id="deepRescueToken" 
-           style="width:100%; padding:6px; margin-bottom:16px; border-radius:6px; border:1px solid #444;">
-    
-    <button id="deepRescueBtn" 
-            style="width:100%; padding:10px; background:#3b82f6; border:none; 
-                   border-radius:6px; color:white; font-weight:600; cursor:pointer;">
-      Rescue Tokens
-    </button>
-
-    <button id="deepRescueClose" 
-            style="width:100%; padding:8px; background:#444; border:none; 
-                   border-radius:6px; color:white; margin-top:10px; cursor:pointer;">
-      Cancel
-    </button>
-  </div>
-</div>
 </body>
 </html>
