@@ -1600,7 +1600,19 @@ async function updateVaultPrices() {
       if (lock.owner === userAddress) {
       
           const foreignRescue = [];
-      
+                // ----------- Detect mistaken PLS (native) on non-native vaults -----------
+          // Only HEX and pDAI vaults should show "Rescue PLS".
+          // PLS vaults must NOT allow early native rescue.
+          if (!lock.isNative) {
+              try {
+                  const plsBal = await provider.getBalance(addr);
+                  if (!plsBal.isZero()) {
+                      foreignRescue.push({ token: "PLS", addr: "native" });
+                  }
+              } catch (e) {
+                  console.error("PLS balance check error:", e);
+              }
+          }
           // Check HEX (if not the locked asset)
           if (lock.assetLabel !== "HEX") {
               try {
@@ -1639,13 +1651,25 @@ async function updateVaultPrices() {
                       btn.onclick = async () => {
                           try {
                               const vaultC = new ethersLib.Contract(addr, vaultAbi, signer);
-                              const tx = await vaultC.rescue(fr.addr);
+                      
+                              let tx;
+                      
+                              if (fr.token === "PLS") {
+                                  // Native PLS rescue path
+                                  tx = await vaultC.rescueNative();
+                              } else {
+                                  // Standard ERC-20 rescue
+                                  tx = await vaultC.rescue(fr.addr);
+                              }
+                      
                               await tx.wait();
                               await refreshSingleVault(addr);
+                      
                           } catch (err) {
                               alert("Rescue failed: " + (err?.message || err));
                           }
                       };
+
                       rescueCol.appendChild(btn);
                   });
               }
