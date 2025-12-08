@@ -653,7 +653,45 @@
     .vault-col-rescue-foreign {
       display: none; /* collapse when empty */
     }
+        /* ============================================
+       HEADER LAYOUT FIX — Compact Tabs + Telegram
+       ============================================ */
     
+    /* Header container: keep items together */
+    .header-tabs {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px; /* set clean spacing between dashboard / userguide */
+        margin-right: 12px;
+    }
+    
+    /* Tabs: compact width, no forced expansion */
+    .header-tab {
+        display: inline-flex;
+        padding: 6px 14px;
+        white-space: nowrap;
+    }
+    
+    /* Telegram icon container */
+    .header-telegram {
+        display: flex;
+        align-items: center;
+        padding-left: 12px;
+    }
+    
+    /* Telegram icon button */
+    .header-telegram img {
+        width: 28px;
+        height: 28px;
+        opacity: 0.9;
+        cursor: pointer;
+        transition: 0.15s ease;
+    }
+    .header-telegram img:hover {
+        opacity: 1;
+    }
+
     @media (min-width: 700px) {
       .vault-col-rescue-foreign {
         flex-direction: column;
@@ -942,6 +980,20 @@
       .col-1 .card:nth-of-type(2) {
         order: 99;
       }
+            /* Mobile header compact layout */
+      .header-tabs {
+          gap: 8px !important;
+      }
+      
+      .header-telegram {
+          padding-left: 8px !important;
+      }
+      
+      .header-telegram img {
+          width: 26px;
+          height: 26px;
+      }
+
     }
     //////////////////////////////////////////////////////////
     /* FIX: allow minimize to work on mobile (override flex !important) */
