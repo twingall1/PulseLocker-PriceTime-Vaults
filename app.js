@@ -1,5 +1,5 @@
 // ================================
-// app.js — V9.1, improved wide 5-column vault layout
+// app.js  improved wide 5-column vault layout
 // with no flashing / disappearing vault cards
 // ================================
 
