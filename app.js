@@ -1855,55 +1855,65 @@ addVaultBtn.addEventListener("click", async () => {
 // "Restore All Vaults" button
 document.getElementById("restoreVaultsBtn")
   .addEventListener("click", restoreAllVaults);
-// ----- DEEP RESCUE UI HANDLERS -----
 
-// Open modal
-document.getElementById("deepRescueLink").onclick = () => {
-    document.getElementById("deepRescueModal").style.display = "block";
-};
+window.addEventListener("DOMContentLoaded", () => {
 
-// Close modal
-document.getElementById("deepRescueClose").onclick = () => {
-    document.getElementById("deepRescueModal").style.display = "none";
-};
+  const deepRescueLink  = document.getElementById("deepRescueLink");
+  const deepRescueModal = document.getElementById("deepRescueModal");
+  const deepRescueClose = document.getElementById("deepRescueClose");
+  const deepRescueBtn   = document.getElementById("deepRescueBtn");
 
-// Rescue logic
-document.getElementById("deepRescueBtn").onclick = async () => {
-    try {
-        const vaultAddr = document.getElementById("deepRescueVault").value.trim();
-        const tokenAddr = document.getElementById("deepRescueToken").value.trim();
+  if (!deepRescueLink || !deepRescueModal || !deepRescueClose || !deepRescueBtn) {
+      console.warn("Deep Rescue elements not found in DOM.");
+      return;
+  }
 
-        if (!vaultAddr || !tokenAddr) {
-            alert("Please enter both vault and token addresses.");
-            return;
-        }
+  // Open modal
+  deepRescueLink.onclick = () => {
+      deepRescueModal.style.display = "block";
+  };
 
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
+  // Close modal
+  deepRescueClose.onclick = () => {
+      deepRescueModal.style.display = "none";
+  };
 
-        const abi = [
-            "function rescue(address token) external"
-        ];
+  // Run rescue
+  deepRescueBtn.onclick = async () => {
+      try {
+          const vaultAddr = document.getElementById("deepRescueVault").value.trim();
+          const tokenAddr = document.getElementById("deepRescueToken").value.trim();
 
-        const vault = new ethers.Contract(vaultAddr, abi, signer);
+          if (!vaultAddr || !tokenAddr) {
+              alert("Please enter both vault and token addresses.");
+              return;
+          }
 
-        const tx = await vault.rescue(tokenAddr);
-        alert("Transaction sent: " + tx.hash);
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const signer = provider.getSigner();
 
-        const receipt = await tx.wait();
-        if (receipt.status === 1) {
-            alert("Rescue completed successfully!");
-        } else {
-            alert("Rescue transaction failed.");
-        }
+          const abi = [
+              "function rescue(address token) external"
+          ];
 
-        document.getElementById("deepRescueModal").style.display = "none";
+          const vault = new ethers.Contract(vaultAddr, abi, signer);
 
-    } catch (err) {
-        console.error(err);
-        alert("Error: " + (err?.message || err));
-    }
-};
+          const tx = await vault.rescue(tokenAddr);
+          alert("Rescue transaction sent: " + tx.hash);
+
+          const receipt = await tx.wait();
+          alert("Rescue completed! Status: " + receipt.status);
+
+          deepRescueModal.style.display = "none";
+
+      } catch (err) {
+          console.error(err);
+          alert("Error: " + (err.data?.message || err.message || err));
+      }
+  };
+
+});
+
 
 // -------------------------------
 // Utilities
