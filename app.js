@@ -26,6 +26,17 @@ function formatLockPrice(value) {
     return s;
   }
 }
+function computeDollarValue(balanceBN, priceBN, lockDecimals, quoteDecimals) {
+  if (!balanceBN || !priceBN || priceBN.isZero()) return 0;
+
+  const usdBN = balanceBN
+    .mul(priceBN)
+    .div(ethersLib.constants.WeiPerEther);
+
+  const displayDecimals = 18 + quoteDecimals - lockDecimals;
+  return Number(ethersLib.utils.formatUnits(usdBN, displayDecimals));
+}
+
 
 function formatReserveK(value) {
   if (!isFinite(value) || value === 0) return "0.0000";
@@ -1397,7 +1408,12 @@ function renderSingleVault(lock) {
             <div class="time-progress-bar-fill" style="${timeBarStyle}"></div>
           </div>
           <div class="small">${timeLabel}</div>
+        
+          <div class="vault-dollar-value" data-role="dollarValue">
+            Dollar value: $0
+          </div>
         </div>
+
 
         <div class="vault-col-feeds">
           <div>
@@ -1594,6 +1610,29 @@ async function updateVaultPrices() {
           4
         )} ${lock.assetLabel}`;
       }
+        // --------------------------------------------
+        // Dollar value display (locked × effective price)
+        // --------------------------------------------
+        const dollarEl = card.querySelector('[data-role="dollarValue"]');
+      
+        if (dollarEl && lock.priceValid && lock.chosenPriceBN.gt(0)) {
+          const quoteDecimals = lock.usedPrimary
+            ? lock.primaryQuoteDecimals
+            : lock.backupQuoteDecimals;
+      
+          const usdValue = computeDollarValue(
+            newBalanceBN,
+            lock.chosenPriceBN,
+            lock.lockDecimals,
+            quoteDecimals
+          );
+      
+          dollarEl.textContent =
+            "Dollar value: $" + formatLockPrice(usdValue);
+        } else if (dollarEl) {
+          dollarEl.textContent = "Dollar value: $0";
+        }
+
       // --------------------------------------------
       // FOREIGN TOKEN RESCUE DETECTION + UI UPDATE
       // --------------------------------------------
